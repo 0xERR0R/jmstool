@@ -1,0 +1,45 @@
+<table class="table table-striped table-condensed table-bordered table-hover ">
+  <thead>
+    <tr>
+      <th class="text-center" width="15%">Timestamp</th>
+      <th class="text-center" width="20%">Queue</th>
+      <th class="text-center">Message</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr [class.newMessage]="message.isNew" *ngFor="let message of messages" (click)="showMessage(message)">
+      <td>{{message.timestamp | date:'y-MM-dd H:mm:ss' }}</td>
+      <td>{{message.queue}}</td>
+      <td>{{message.text | abbreviate : 200}}</td>
+    </tr>
+  </tbody>
+</table>
+<button type="button" class="btn btn-primary btn-sm" (click)="clear()"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Clear</button>
+
+<div bsModal #childModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body ">
+        <div class="panel panel-primary">
+          <div class="panel-heading">Message text</div>
+          <div class="panel-body messageBodyText">
+            <samp>
+          {{messageToShow ? messageToShow.text : '-'}}
+        </samp>
+          </div>
+        </div>
+        <div *ngIf="messageToShow && getKeys(messageToShow.props).length > 0" class="panel panel-primary">
+          <div class="panel-heading">Properties</div>
+          <div class="panel-body messageBodyText">
+            <samp>
+          <samp>
+          <p *ngFor="let key of getKeys(messageToShow.props)">{{key}}: {{messageToShow.props[key]}}</p>
+        </samp>
+            </samp>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm pull-right" (click)="hideChildModal()"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Close</button>
+      </div>
+    </div>
+  </div>
+</div>

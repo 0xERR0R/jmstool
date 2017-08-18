@@ -1,0 +1,39 @@
+@import "./styles/css/bootstrap.min.css";
+
+.panel-heading {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.form-control {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  height: 35px;
+}
+
+.modal-header {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.modal-body {
+  overflow: auto;
+  max-height: 600px;
+}
+
+#messageTabContent {
+  height: 300px;
+  overflow:auto;
+}
+
+.newMessage {
+  font-weight: bold;
+}
+
+.messageBodyText {
+  font-size: 0.9em;
+  line-height: 1.1;
+}
+
+.formGroup {
+  margin-bottom: 10px;
+}

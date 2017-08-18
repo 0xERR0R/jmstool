@@ -1,0 +1,19 @@
+<div *ngIf="queues.length > 0" id="newMessagePanel" class="panel panel-primary">
+    <div class="panel-heading">Send new message</div>
+    <div class="panel-body" style="min-height: 300px">
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#text"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Text</a></li>
+            <li><a data-toggle="tab" href="#file"><span class="glyphicon glyphicon-file" aria-hidden="true"></span> File</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="text" class="tab-pane fade in active">
+                <div>
+                    <new-text-message></new-text-message>
+                </div>
+            </div>
+            <div id="file" class="tab-pane fade">
+                <new-file-message></new-file-message>
+            </div>
+        </div>
+    </div>
+</div>

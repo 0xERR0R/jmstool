@@ -1,0 +1,19 @@
+<div id="messagesTablePanel" class="panel panel-primary">
+  <div class="panel-heading">Messages</div>
+  <div class="panel-body">
+    <ul class="nav nav-tabs">
+      <li class="active"><a data-toggle="tab" href="#incoming"><span class="glyphicon glyphicon-import" aria-hidden="true"></span> Incoming</a></li>
+      <li><a data-toggle="tab" href="#outgoing"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Outgoing</a></li>
+    </ul>
+    <div id="messageTabContent" class="tab-content">
+      <div id="incoming" class="tab-pane fade in active">
+        <div>
+          <message-table type="INCOMING" showNotifications="true"></message-table>
+        </div>
+      </div>
+      <div id="outgoing" class="tab-pane fade">
+        <message-table type="OUTGOING"></message-table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+
+  ooooo oooo     oooo  oooooooo8 ooooooooooo                      o888  
+   888   8888o   888  888        88  888  88 ooooooo     ooooooo   888  
+   888   88 888o8 88   888oooooo     888   888     888 888     888 888  
+   888   88  888  88          888    888   888     888 888     888 888  
+   888  o88o  8  o88o o88oooo888    o888o    88ooo88     88ooo88  o888o 
+8o888           
+                   Version ${application.version}

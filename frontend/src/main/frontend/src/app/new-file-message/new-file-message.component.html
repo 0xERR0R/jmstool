@@ -1,0 +1,14 @@
+<div class="form-group">
+  <label>Destination queue</label>
+  <outgoinig-queues-select (value)="selectedQueue=$event"></outgoinig-queues-select>
+  <label>File</label>
+  <div class="form-inline">
+    <input #fileInput class="form-control" type="file" (change)="fileChange($event.target)" placeholder="Upload file" accept=".zip">
+    <button type="submit" class="btn btn-primary btn-sm" (click)="sendFile()" [disabled]="busy || selectedFile == null">
+     <div *ngIf="busy; then busyText else normalText"></div>
+      <ng-template #busyText><div><span class="glyphicon glyphicon-hourglass" aria-hidden="true"></span> Sending...</div></ng-template>
+      <ng-template #normalText><div><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Send</div></ng-template>
+    </button>
+  </div>
+
+</div>

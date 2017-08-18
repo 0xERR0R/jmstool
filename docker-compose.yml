@@ -1,0 +1,20 @@
+version: '2'
+services:
+  tomcat:
+    build:
+      context: backend
+    depends_on:
+      - activemq
+    ports:
+     - "8080:8080"
+    environment:
+     - TZ=Europe/Berlin
+     - spring.profiles.active=dev
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+  activemq:
+    image: "webcenter/activemq:5.14.3"
+    environment:
+      - ACTIVEMQ_STATIC_QUEUES=in1;in2;out1;out2
+    ports:
+     - "8161:8161"

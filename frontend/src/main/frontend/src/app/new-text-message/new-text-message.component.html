@@ -1,0 +1,32 @@
+<form (ngSubmit)="onSubmit(form.value)" #form="ngForm">
+    <div class="form-group">
+        <label>Destination queue</label>
+        <outgoinig-queues-select (value)="selectedQueue=$event"></outgoinig-queues-select>
+        <label for="messageTextArea">Message body</label>
+        <textarea name="messageBody" class="form-control" [(ngModel)]="messageBody" rows="7" ngModel placeholder="Message text" required></textarea>
+    </div>
+    <div *ngIf="properties.length > 0" class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <div class="panel-title">
+                    <span class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#propertiesPanel" aria-expanded="false" aria-controls="collapseOne">
+               <span data-toggle="tooltip" title="Click to expand"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Message properties</span>
+                    </span>
+                </div>
+            </div>
+            <div id="propertiesPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                    <div *ngFor="let prop of properties" class="form-group">
+                        <label for="property.{{prop}}">{{prop}}</label>
+                        <input ngModel name="property.{{prop}}" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-inline">
+        <label for="count">Number of messages:</label>
+        <input name="count" class="form-control" [(ngModel)]="count" required type="number" min=1 max=9999 style="width: 100px" />
+        <button type="submit" class="btn btn-primary btn-sm" style="margin-left: 10px" [disabled]="!form.form.valid"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Send</button>
+    </div>
+</form>

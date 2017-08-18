@@ -1,0 +1,3 @@
+<select #queue (input)="emitValue(queue.value)" [disabled]="queues.length == 1" class="form-control" [(ngModel)]="selectedQueue" name="selectedQueue" required>
+    <option *ngFor="let queue of queues">{{queue}}</option>
+</select>
