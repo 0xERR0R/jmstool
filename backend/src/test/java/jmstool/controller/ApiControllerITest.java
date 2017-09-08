@@ -31,6 +31,8 @@ import com.mockrunner.mock.jms.MockQueue;
 import com.mockrunner.mock.jms.MockQueueConnectionFactory;
 import com.mockrunner.mock.jms.MockTextMessage;
 
+import static org.mockito.Mockito.*;
+
 import jmstool.storage.LocalMessageStorage;
 
 @RunWith(SpringRunner.class)
@@ -55,10 +57,10 @@ public class ApiControllerITest {
 
 		MockQueueConnectionFactory connectionFactory = f.getMockQueueConnectionFactory();
 		DestinationManager destinationManager = f.getDestinationManager();
-		qIn1 = destinationManager.createQueue("test1");
-		qIn2 = destinationManager.createQueue("test2");
-		qOut1 = destinationManager.createQueue("test3");
-		qOut2 = destinationManager.createQueue("test4");
+		qIn1 = spy(destinationManager.createQueue("test1"));
+		qIn2 = spy(destinationManager.createQueue("test2"));
+		qOut1 = spy(destinationManager.createQueue("test3"));
+		qOut2 = spy(destinationManager.createQueue("test4"));
 		builder.bind("java:comp/env/jms/cf", connectionFactory);
 		builder.bind("java:comp/env/jms/in1", qIn1);
 		builder.bind("java:comp/env/jms/in2", qIn2);
@@ -75,6 +77,10 @@ public class ApiControllerITest {
 		qIn2.clear();
 		qOut1.clear();
 		qOut2.clear();
+		reset(qIn1);
+		reset(qIn2);
+		reset(qOut1);
+		reset(qOut2);
 	}
 
 	@Test
@@ -104,7 +110,7 @@ public class ApiControllerITest {
 						"\"props\": {\"MYPROP\":\"MYVALUE\"}}")
 				.contentType("application/json")).andExpect(status().isOk());
 
-		Thread.sleep(500);
+		verify(qOut1, timeout(5000)).addMessage(any());
 		
 		// Message was sent with the outgoing queue
 		List<MockTextMessage> receivedMessageList = qOut1.getCurrentMessageList();
@@ -128,6 +134,8 @@ public class ApiControllerITest {
 						"\"text\": \"messageText\"," + //
 						"\"props\": {}}")
 				.contentType("application/json")).andExpect(status().isOk());
+		
+		verify(qOut1, timeout(5000).times(3)).addMessage(any());
 
 		// Message was sent with the outgoing queue
 		List<MockTextMessage> receivedMessageList = qOut1.getCurrentMessageList();
@@ -136,7 +144,7 @@ public class ApiControllerITest {
 		assertThat(receivedMessageList.get(1).getText()).isEqualTo("messageText");
 		assertThat(receivedMessageList.get(2).getText()).isEqualTo("messageText");
 
-		// Storage has now one message
+		// Storage has now 3 messages
 		assertThat(outgoingStorage.getMessagesAfter(0)).hasSize(3);
 	}
 
@@ -155,9 +163,14 @@ public class ApiControllerITest {
 	public void getMessagesShouldReturnAllMessages() throws Exception {
 
 		qIn1.addMessage(new MockTextMessage("message in queue1"));
+		verify(qIn1, timeout(5000)).addMessage(any());
+		
+		// sleep here to guarantee the message order
 		Thread.sleep(50);
+		
 		qIn2.addMessage(new MockTextMessage("message in queue2"));
-		Thread.sleep(500);
+		verify(qIn2, timeout(5000)).addMessage(any());
+		
 		mockMvc.perform(get("/api/messages") //
 				.param("messageType", "INCOMING") //
 				.param("lastId", "0") //
