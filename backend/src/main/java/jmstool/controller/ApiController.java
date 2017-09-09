@@ -46,6 +46,18 @@ import jmstool.storage.LocalMessageStorage;
 @RestController
 public class ApiController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	public final static String URL_API_MESSAGES = "/api/messages";
+	
+	public final static String URL_API_SEND = "/api/send";
+	
+	public final static String URL_API_QUEUES = "/api/queues";
+	
+	public final static String URL_API_PROPERTIES = "/api/properties";
+	
+	public final static String URL_API_BULK_FILE = "/api/bulkFile";
+	
+	public final static String URL_API_WORK_IN_PROGRESS = "/api/workInProgress";
 
 	@Autowired
 	private AsyncMessageSender messageSender;
@@ -62,7 +74,7 @@ public class ApiController {
 	@Value("${jmstool.userMessageProperties:}")
 	private List<String> userMessageProperties = new ArrayList<>();
 
-	@GetMapping("/api/messages")
+	@GetMapping(URL_API_MESSAGES)
 	public List<SimpleMessage> getMessages(@RequestParam MessageType messageType, @RequestParam long lastId,
 			@RequestParam int maxCount) {
 
@@ -82,12 +94,12 @@ public class ApiController {
 		return result.stream().sorted(Collections.reverseOrder()).limit(maxCount).collect(Collectors.toList());
 	}
 
-	@GetMapping("/api/properties")
+	@GetMapping(URL_API_PROPERTIES)
 	public List<String> getNewMessageProperties() {
 		return userMessageProperties;
 	}
 
-	@PostMapping("/api/send")
+	@PostMapping(URL_API_SEND)
 	public void sendMessage(@RequestParam Optional<Integer> count, @RequestBody SimpleMessage message) {
 
 		final int total = count.orElse(1);
@@ -99,12 +111,12 @@ public class ApiController {
 
 	}
 
-	@GetMapping(value = "/api/queues")
+	@GetMapping(URL_API_QUEUES)
 	public List<String> getOutgoingQueues() {
 		return queueManager.getOutgoingQueues();
 	}
 
-	@PostMapping(path = "/api/bulkFile", consumes = { "multipart/*" })
+	@PostMapping(path = URL_API_BULK_FILE, consumes = { "multipart/*" })
 	public @ResponseBody Map<String, String> bulkSend(@RequestParam("file") MultipartFile file,
 			@RequestParam("queue") String queue) throws IOException, InterruptedException {
 		Path tempFile = Files.createTempFile(file.getOriginalFilename(), null, new FileAttribute[0]);
@@ -125,17 +137,16 @@ public class ApiController {
 		return Collections.singletonMap("count", Integer.toString(count.get()));
 	}
 
-	@GetMapping("/api/workInProgress")
+	@GetMapping(URL_API_WORK_IN_PROGRESS)
 	public Stats serverWorkInProgress() {
 		return messageSender.getStats();
 	}
 
 	private SimpleMessage createSimpleMessageFromPath(Path path, String queue) {
 		try {
-			byte[] raw = Files.readAllBytes(path);
-			String message = new String(raw, Charset.forName("UTF-8"));
-			return new SimpleMessage(message, queue);
+			return new SimpleMessage(path, queue);
 		} catch (IOException e) {
+			logger.error("can't create message from file '{}'", path, e);
 			throw new RuntimeException(e);
 		}
 	}

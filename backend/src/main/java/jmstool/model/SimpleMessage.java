@@ -1,6 +1,10 @@
 package jmstool.model;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,6 +60,13 @@ public class SimpleMessage implements Serializable, Comparable<SimpleMessage> {
 
 	public SimpleMessage(String text, String queue) {
 		this(text, queue, Collections.<String, String>emptyMap());
+	}
+	
+	public SimpleMessage(Path content, String queue) throws IOException {
+			byte[] raw = Files.readAllBytes(content);
+			String message = new String(raw, Charset.forName("UTF-8"));
+			this.text = message;
+			this.queue = queue;
 	}
 
 	public SimpleMessage(String text, String queue, Map<String, String> props) {
