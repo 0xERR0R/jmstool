@@ -2,12 +2,13 @@ package jmstool.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.awaitility.Awaitility.*;
 
 import java.util.List;
 
@@ -31,8 +32,6 @@ import com.mockrunner.mock.jms.MockQueue;
 import com.mockrunner.mock.jms.MockQueueConnectionFactory;
 import com.mockrunner.mock.jms.MockTextMessage;
 
-import static org.mockito.Mockito.*;
-
 import jmstool.storage.LocalMessageStorage;
 
 @RunWith(SpringRunner.class)
@@ -49,18 +48,30 @@ public class ApiControllerITest {
 
 	@Resource(name = "outgoingStorage")
 	private LocalMessageStorage outgoingStorage;
+	
+	@Resource(name = "incomingStorage")
+	private LocalMessageStorage incomingStorage;
 
 	@BeforeClass
+	/**
+	 * Performing JNDI configuration in this static method, because the JMS Connection Factory 
+	 * must be available before first test method will be executed. Otherwise the spring application context 
+	 * can't be started (due to missing JNDI entry for connection factory).
+	 * 
+	 * @throws IllegalStateException
+	 * @throws NamingException
+	 */
 	public static void setUpOnce() throws IllegalStateException, NamingException {
+		
 		SimpleNamingContextBuilder builder = SimpleNamingContextBuilder.emptyActivatedContextBuilder();
 		JMSMockObjectFactory f = new JMSMockObjectFactory();
 
 		MockQueueConnectionFactory connectionFactory = f.getMockQueueConnectionFactory();
 		DestinationManager destinationManager = f.getDestinationManager();
-		qIn1 = spy(destinationManager.createQueue("test1"));
-		qIn2 = spy(destinationManager.createQueue("test2"));
-		qOut1 = spy(destinationManager.createQueue("test3"));
-		qOut2 = spy(destinationManager.createQueue("test4"));
+		qIn1 = destinationManager.createQueue("test1");
+		qIn2 = destinationManager.createQueue("test2");
+		qOut1 = destinationManager.createQueue("test3");
+		qOut2 = destinationManager.createQueue("test4");
 		builder.bind("java:comp/env/jms/cf", connectionFactory);
 		builder.bind("java:comp/env/jms/in1", qIn1);
 		builder.bind("java:comp/env/jms/in2", qIn2);
@@ -77,31 +88,29 @@ public class ApiControllerITest {
 		qIn2.clear();
 		qOut1.clear();
 		qOut2.clear();
-		reset(qIn1);
-		reset(qIn2);
-		reset(qOut1);
-		reset(qOut2);
 	}
 
 	@Test
 	public void shouldReturnQueuesAsArray() throws Exception {
 
-		mockMvc.perform(get("/api/queues")).andExpect(status().isOk())
-				.andExpect(content().contentType("application/json;charset=UTF-8"))
-				.andExpect(content().json("['java:comp/env/jms/out1','java:comp/env/jms/out2']"));
+		mockMvc.perform(get("/api/queues"))
+		       .andExpect(status().isOk())
+			   .andExpect(content().contentType("application/json;charset=UTF-8"))
+			   .andExpect(content().json("['java:comp/env/jms/out1','java:comp/env/jms/out2']"));
 	}
 
 	@Test
 	public void shouldReturnUserProperties() throws Exception {
-		mockMvc.perform(get("/api/properties")).andExpect(status().isOk())
-				.andExpect(content().contentType("application/json;charset=UTF-8"))
-				.andExpect(content().json("['MYPROP', 'OTHERPROP']"));
+		mockMvc.perform(get("/api/properties"))
+		       .andExpect(status().isOk())
+			   .andExpect(content().contentType("application/json;charset=UTF-8"))
+			   .andExpect(content().json("['MYPROP', 'OTHERPROP']"));
 	}
 
 	@Test
 	public void sendMessageWithProperties() throws Exception {
 		// storage is empty
-		assertThat(outgoingStorage.getMessagesAfter(0)).hasSize(0);
+		assertThat(outgoingStorage.size()).isEqualTo(0);
 
 		// send message via REST
 		mockMvc.perform(post("/api/send").content( //
@@ -109,10 +118,12 @@ public class ApiControllerITest {
 						"\"text\": \"messageText\"," + //
 						"\"props\": {\"MYPROP\":\"MYVALUE\"}}")
 				.contentType("application/json")).andExpect(status().isOk());
+		
+		await().until(() -> outgoingStorage.size() == 1);
 
-		verify(qOut1, timeout(5000)).addMessage(any());
 		
 		// Message was sent with the outgoing queue
+		@SuppressWarnings("unchecked")
 		List<MockTextMessage> receivedMessageList = qOut1.getCurrentMessageList();
 		assertThat(receivedMessageList).hasSize(1);
 		MockTextMessage receivedMessage = receivedMessageList.get(0);
@@ -120,13 +131,13 @@ public class ApiControllerITest {
 		assertThat(receivedMessage.getStringProperty("MYPROP")).isEqualTo("MYVALUE");
 
 		// Storage has now one message
-		assertThat(outgoingStorage.getMessagesAfter(0)).hasSize(1);
+		assertThat(outgoingStorage.size()).isEqualTo(1);
 	}
 	
 	@Test
 	public void sendMessageWithCount() throws Exception {
 		// storage is empty
-		assertThat(outgoingStorage.getMessagesAfter(0)).hasSize(0);
+		assertThat(outgoingStorage.size()).isEqualTo(0);
 
 		// send message via REST
 		mockMvc.perform(post("/api/send?count=3").content( //
@@ -135,9 +146,11 @@ public class ApiControllerITest {
 						"\"props\": {}}")
 				.contentType("application/json")).andExpect(status().isOk());
 		
-		verify(qOut1, timeout(5000).times(3)).addMessage(any());
+		await().until(() -> outgoingStorage.size() == 3);
+		
 
 		// Message was sent with the outgoing queue
+		@SuppressWarnings("unchecked")
 		List<MockTextMessage> receivedMessageList = qOut1.getCurrentMessageList();
 		assertThat(receivedMessageList).hasSize(3);
 		assertThat(receivedMessageList.get(0).getText()).isEqualTo("messageText");
@@ -145,7 +158,7 @@ public class ApiControllerITest {
 		assertThat(receivedMessageList.get(2).getText()).isEqualTo("messageText");
 
 		// Storage has now 3 messages
-		assertThat(outgoingStorage.getMessagesAfter(0)).hasSize(3);
+		assertThat(outgoingStorage.size()).isEqualTo(3);
 	}
 
 	@Test
@@ -163,13 +176,10 @@ public class ApiControllerITest {
 	public void getMessagesShouldReturnAllMessages() throws Exception {
 
 		qIn1.addMessage(new MockTextMessage("message in queue1"));
-		verify(qIn1, timeout(5000)).addMessage(any());
-		
-		// sleep here to guarantee the message order
-		Thread.sleep(50);
+		await().until(() -> incomingStorage.size() == 1); 
 		
 		qIn2.addMessage(new MockTextMessage("message in queue2"));
-		verify(qIn2, timeout(5000)).addMessage(any());
+		await().until(() -> incomingStorage.size() == 2);
 		
 		mockMvc.perform(get("/api/messages") //
 				.param("messageType", "INCOMING") //

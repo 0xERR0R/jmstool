@@ -37,4 +37,8 @@ public class LocalMessageStorage {
 	public synchronized void clear() {
 		storage.clear();
 	}
+	
+	public synchronized int size() {
+		return storage.size();
+	}
 }
