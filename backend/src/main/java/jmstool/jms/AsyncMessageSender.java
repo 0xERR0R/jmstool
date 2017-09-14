@@ -46,10 +46,10 @@ public class AsyncMessageSender implements Runnable {
 	private final AtomicInteger errorCounter = new AtomicInteger();
 
 	@Autowired
-	private JmsTemplate jmsTemplate;
+	protected JmsTemplate jmsTemplate;
 
 	@Resource(name = "outgoingStorage")
-	private LocalMessageStorage outgoingStorage;
+	protected LocalMessageStorage outgoingStorage;
 
 	private final BlockingQueue<SimpleMessage> pendingMessages = new LinkedBlockingQueue<>();
 

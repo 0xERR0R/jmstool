@@ -5,13 +5,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
+import javax.naming.NamingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -28,7 +29,7 @@ import jmstool.storage.LocalMessageStorage;
  *
  */
 @Component
-public class QueueManager implements CommandLineRunner, DisposableBean {
+public class QueueManager implements CommandLineRunner {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Value("${jmstool.incomingQueues:}")
@@ -50,19 +51,37 @@ public class QueueManager implements CommandLineRunner, DisposableBean {
 
 	@Override
 	public void run(String... arg0) throws Exception {
-		for (final String queue : incomingQueues) {
-			logger.info("registering listener for incoming queue '{}'", queue);
 
-			// lookup to fail fast
-			new JndiLocatorDelegate().lookup(queue, Queue.class);
-			DefaultMessageListenerContainer c = createContainer(queue);
-			containers.add(c);
-			c.start();
+		for (final String queue : incomingQueues) {
+			registerIncomingQueue(queue);
 		}
 
 		for (final String queue : outgoingQueues) {
-			logger.info("lookup outgoing queue '{}'", queue);
+			registerOutgoingQueue(queue);
+		}
+	}
+
+	private void registerOutgoingQueue(final String queue) throws NamingException {
+		logger.info("lookup outgoing queue '{}'", queue);
+		lookupQueue(queue);
+	}
+
+	private void registerIncomingQueue(final String queue) throws NamingException {
+		logger.info("registering listener for incoming queue '{}'", queue);
+
+		// lookup to fail fast
+		lookupQueue(queue);
+		DefaultMessageListenerContainer c = createContainer(queue);
+		containers.add(c);
+		c.start();
+	}
+
+	private void lookupQueue(String queue) throws NamingException {
+		try {
 			new JndiLocatorDelegate().lookup(queue, Queue.class);
+		} catch (NamingException e) {
+			logger.error("unable to lookup the queue '{}'", queue, e);
+			throw e;
 		}
 	}
 
@@ -81,8 +100,9 @@ public class QueueManager implements CommandLineRunner, DisposableBean {
 		return Collections.unmodifiableList(outgoingQueues);
 	}
 
-	@Override
-	public void destroy() throws Exception {
+	@PreDestroy
+	public void shutdown() {
+		logger.debug("destroying running containers on shutdown");
 		for (DefaultMessageListenerContainer c : containers) {
 			c.shutdown();
 		}

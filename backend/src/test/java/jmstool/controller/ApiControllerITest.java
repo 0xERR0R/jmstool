@@ -16,7 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -159,9 +158,9 @@ public class ApiControllerITest {
 
 		// Message was sent with the outgoing queue
 		assertThat(qOut1.getCurrentMessageList()) //
-		.hasSize(3) //
-		.extracting("text") //
-		.containsExactly("messageText","messageText","messageText");
+				.hasSize(3) //
+				.extracting("text") //
+				.containsExactly("messageText", "messageText", "messageText");
 
 		// Storage has now 3 messages
 		assertThat(outgoingStorage.size()).isEqualTo(3);

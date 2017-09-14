@@ -1,7 +1,6 @@
 package jmstool.controller;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -11,7 +10,6 @@ import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,17 +44,17 @@ import jmstool.storage.LocalMessageStorage;
 @RestController
 public class ApiController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	
+
 	public final static String URL_API_MESSAGES = "/api/messages";
-	
+
 	public final static String URL_API_SEND = "/api/send";
-	
+
 	public final static String URL_API_QUEUES = "/api/queues";
-	
+
 	public final static String URL_API_PROPERTIES = "/api/properties";
-	
+
 	public final static String URL_API_BULK_FILE = "/api/bulkFile";
-	
+
 	public final static String URL_API_WORK_IN_PROGRESS = "/api/workInProgress";
 
 	@Autowired
@@ -69,7 +67,7 @@ public class ApiController {
 	private LocalMessageStorage outgoingStorage;
 
 	@Resource(name = "incomingStorage")
-	private LocalMessageStorage incomingLocalStorage;
+	private LocalMessageStorage incomingStorage;
 
 	@Value("${jmstool.userMessageProperties:}")
 	private List<String> userMessageProperties = new ArrayList<>();
@@ -81,7 +79,7 @@ public class ApiController {
 		Collection<SimpleMessage> result;
 		switch (messageType) {
 		case INCOMING:
-			result = incomingLocalStorage.getMessagesAfter(lastId);
+			result = incomingStorage.getMessagesAfter(lastId);
 			break;
 		case OUTGOING:
 			result = outgoingStorage.getMessagesAfter(lastId);
@@ -103,6 +101,7 @@ public class ApiController {
 	public void sendMessage(@RequestParam Optional<Integer> count, @RequestBody SimpleMessage message) {
 
 		final int total = count.orElse(1);
+
 		for (int i = 0; i < total; i++) {
 			logger.debug("sending new message '{}' to queue '{}' with props '{}' count {}/{} ", message.getText(),
 					message.getQueue(), message.getProps(), i + 1, total);

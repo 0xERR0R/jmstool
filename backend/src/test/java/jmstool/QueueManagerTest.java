@@ -45,7 +45,7 @@ public class QueueManagerTest {
 		q1 = f.getDestinationManager().createQueue("test1");
 		q2 = f.getDestinationManager().createQueue("test2");
 
-		// register both queues unter JNDI names
+		// register both queues under JNDI names
 		SimpleNamingContextBuilder builder = SimpleNamingContextBuilder.emptyActivatedContextBuilder();
 		builder.bind("java:comp/env/q1", q1);
 		builder.bind("java:comp/env/q2", q2);
@@ -96,7 +96,7 @@ public class QueueManagerTest {
 		sut.run("");
 		testModule.verifyQueueConnectionStarted();
 
-		sut.destroy();
+		sut.shutdown();
 
 		// check if all connections were closed during shut down
 		testModule.verifyAllQueueSessionsClosed();

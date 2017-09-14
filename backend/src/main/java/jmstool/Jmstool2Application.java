@@ -1,7 +1,5 @@
 package jmstool;
 
-import java.util.Properties;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -35,12 +33,8 @@ public class Jmstool2Application extends SpringBootServletInitializer {
 	}
 
 	@Bean
-	public CommandLineRunner schedulingRunner(TaskExecutor executor, AsyncMessageSender sender) {
-		return new CommandLineRunner() {
-			public void run(String... args) throws Exception {
-				executor.execute(sender);
-			}
-		};
+	public CommandLineRunner asyncMessageSenderExecutorRunner(TaskExecutor executor, AsyncMessageSender sender) {
+		return (args) -> executor.execute(sender);
 	}
 
 	@Override
