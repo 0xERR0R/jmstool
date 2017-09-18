@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/0xERR0R/jmstool.svg?branch=develop)](https://travis-ci.org/0xERR0R/jmstool)
+
 ## JmsTool
 This is a simple web app (Angular frontend and Spring backend) to receive and send JMS messages in an J2EE container (Apache Tomcat, IBM WebSphere, ...)
 ![Screenshot](screenshot.png "Main Window")
