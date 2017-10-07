@@ -23,7 +23,7 @@ export class MessagesService {
   sendMessage(queue: string, message: string, count: number, props: any): Observable<Response> {
     const data: URLSearchParams = new URLSearchParams();
     data.append('count', count.toString());
-    return this.http.post('api/send', { queue: queue, text: message, props: props }, {params : data});
+    return this.http.post('api/send', { queue: queue, text: message, props: props }, { params: data });
   }
 
   sendFileForBulk(queue: string, file: File): Observable<number> {
@@ -35,9 +35,9 @@ export class MessagesService {
       .map(res => res.json().count);
   }
 
-  getServerWorkInProgress(): Observable<any>{
+  getServerWorkInProgress(): Observable<any> {
     return this.http.get('api/workInProgress')
-    .map((res: Response) => res.json());
+      .map((res: Response) => res.json());
   }
 
   getMessages(messageType: MessageType, lastId: number, maxCount: number): Observable<Array<SimpleMessage>> {
@@ -46,8 +46,25 @@ export class MessagesService {
     data.append('lastId', lastId.toString());
     data.append('maxCount', maxCount.toString());
 
-    return this.http.get('api/messages', {params : data})
+    return this.http.get('api/messages', { params: data })
       .map(this.convertToMessage);
+  }
+
+  getListenerStatus(): Observable<Map<String, Object>> {
+    return this.http.get('/api/statusListener')
+      .map((res: Response) => this.convertToMap(res.json()));
+  }
+
+  stopLister(queue: string): Observable<Response> {
+    const data: URLSearchParams = new URLSearchParams();
+    data.append('queue', queue);
+    return this.http.post('api/stopListener', {}, { params: data });
+  }
+
+  startLister(queue: string): Observable<Response> {
+    const data: URLSearchParams = new URLSearchParams();
+    data.append('queue', queue);
+    return this.http.post('api/startListener', {}, { params: data });
   }
 
   private convertToMessage(res: Response) {
@@ -58,5 +75,12 @@ export class MessagesService {
     });
 
     return data;
+  }
+
+  private convertToMap(json): Map<String, Object> {
+    let result = new Map();
+    Object.keys(json).forEach(k => result.set(k, json[k]));
+
+    return result;
   }
 }

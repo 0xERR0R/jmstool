@@ -57,6 +57,12 @@ public class ApiController {
 
 	public final static String URL_API_WORK_IN_PROGRESS = "/api/workInProgress";
 
+	public final static String URL_API_STATUS_LISTENER = "/api/statusListener";
+
+	public final static String URL_API_STOP_LISTENER = "/api/stopListener";
+	
+	public final static String URL_API_START_LISTENER = "/api/startListener";
+
 	@Autowired
 	private AsyncMessageSender messageSender;
 
@@ -139,6 +145,21 @@ public class ApiController {
 	@GetMapping(URL_API_WORK_IN_PROGRESS)
 	public Stats serverWorkInProgress() {
 		return messageSender.getStats();
+	}
+
+	@GetMapping(URL_API_STATUS_LISTENER)
+	public Map<String, Boolean> getStatusListener() {
+		return queueManager.getListenerStatus();
+	}
+
+	@PostMapping(URL_API_STOP_LISTENER)
+	public void stopListener(@RequestParam String queue) {
+		queueManager.stopListener(queue);
+	}
+	
+	@PostMapping(URL_API_START_LISTENER)
+	public void startListener(@RequestParam String queue) {
+		queueManager.startListener(queue);
 	}
 
 	private SimpleMessage createSimpleMessageFromPath(Path path, String queue) {

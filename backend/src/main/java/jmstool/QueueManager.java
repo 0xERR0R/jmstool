@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -17,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import org.springframework.jms.listener.MessageListenerContainer;
 import org.springframework.jms.support.destination.JndiDestinationResolver;
 import org.springframework.jndi.JndiLocatorDelegate;
 import org.springframework.stereotype.Component;
@@ -106,5 +110,27 @@ public class QueueManager implements CommandLineRunner {
 		for (DefaultMessageListenerContainer c : containers) {
 			c.shutdown();
 		}
+	}
+
+	public Map<String, Boolean> getListenerStatus() {
+		return containers.stream().collect(Collectors.toMap(c -> c.getDestinationName(), c -> c.isRunning()));
+
+	}
+
+	private MessageListenerContainer findContainerForQueue(String queue) {
+		Optional<DefaultMessageListenerContainer> container = containers.stream()
+				.filter(c -> c.getDestinationName().equals(queue)).findFirst();
+		return container.orElseThrow(() -> new IllegalStateException("Couldn't find a listener for queuev" + queue));
+
+	}
+
+	public void stopListener(String queue) {
+		logger.debug("stopping listener container for queue {}", queue);
+		findContainerForQueue(queue).stop();
+	}
+
+	public void startListener(String queue) {
+		logger.debug("starting listener container for queue {}", queue);
+		findContainerForQueue(queue).start();
 	}
 }
