@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { NotificationsService } from 'angular2-notifications';
 import { MessagesService } from '../messages.service';
 
 
@@ -12,7 +13,7 @@ export class NewTextMessageComponent {
   messageBody: string;
   count: number = 1;
 
-  constructor(private messagesService: MessagesService) {
+  constructor(private messagesService: MessagesService, private notificationsService: NotificationsService) {
 
     messagesService.getNewMessageProperties().subscribe(
       result => {
@@ -30,8 +31,9 @@ export class NewTextMessageComponent {
       }
     }
 
-    this.messagesService.sendMessage(this.selectedQueue, this.messageBody, this.count, props).subscribe();
-    this.messageBody = '';
+    this.messagesService.sendMessage(this.selectedQueue, this.messageBody, this.count, props)
+      .subscribe((res =>
+        this.notificationsService.success('Message', 'was sent successfully', { timeOut: 2000 })));
   }
 
 }
