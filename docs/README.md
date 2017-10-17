@@ -8,9 +8,10 @@ This is a simple web app (Angular frontend and Spring backend) to receive and se
 * Pop up notifications on new received messages
 * Detail view of a single message (Text, message properties)
 * Sending of JMS message
- * single message as text
- * Upload of ZIP with message files - each message inside will be sent
- * Asyncronous sending of messages with progress indication
+* single message as text
+* Upload of ZIP with message files - each message inside will be sent
+* Asyncronous sending of messages with progress indication
+* Stop and start JMS Queue listeners
 
 ### Configuration
 Please change following configuration properties (application.properties in WAR, environment variables or as JNDI context properties) before deployment.
