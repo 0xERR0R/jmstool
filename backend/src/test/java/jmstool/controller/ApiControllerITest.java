@@ -175,6 +175,23 @@ public class ApiControllerITest {
 				.andExpect(status().isOk()) //
 				.andExpect(content().contentType("application/json;charset=UTF-8")) //
 				.andExpect(content().json("[]"));
+
+		mockMvc.perform(get(URL_API_MESSAGES) //
+				.param("messageType", "OUTGOING") //
+				.param("lastId", "0") //
+				.param("maxCount", "200")) //
+				.andExpect(status().isOk()) //
+				.andExpect(content().contentType("application/json;charset=UTF-8")) //
+				.andExpect(content().json("[]"));
+	}
+
+	@Test
+	public void getMessagesWithWrongTypeShouldProduceBadRequest() throws Exception {
+		mockMvc.perform(get(URL_API_MESSAGES) //
+				.param("messageType", "WRONG") //
+				.param("lastId", "0") //
+				.param("maxCount", "200")) //
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test

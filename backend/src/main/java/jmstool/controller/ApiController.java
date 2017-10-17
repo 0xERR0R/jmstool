@@ -60,7 +60,7 @@ public class ApiController {
 	public final static String URL_API_STATUS_LISTENER = "/api/statusListener";
 
 	public final static String URL_API_STOP_LISTENER = "/api/stopListener";
-	
+
 	public final static String URL_API_START_LISTENER = "/api/startListener";
 
 	@Autowired
@@ -82,7 +82,7 @@ public class ApiController {
 	public List<SimpleMessage> getMessages(@RequestParam MessageType messageType, @RequestParam long lastId,
 			@RequestParam int maxCount) {
 
-		Collection<SimpleMessage> result;
+		Collection<SimpleMessage> result = null;
 		switch (messageType) {
 		case INCOMING:
 			result = incomingStorage.getMessagesAfter(lastId);
@@ -90,8 +90,6 @@ public class ApiController {
 		case OUTGOING:
 			result = outgoingStorage.getMessagesAfter(lastId);
 			break;
-		default:
-			throw new IllegalStateException("unknown message type: " + messageType);
 		}
 
 		// sort and limit
@@ -156,7 +154,7 @@ public class ApiController {
 	public void stopListener(@RequestParam String queue) {
 		queueManager.stopListener(queue);
 	}
-	
+
 	@PostMapping(URL_API_START_LISTENER)
 	public void startListener(@RequestParam String queue) {
 		queueManager.startListener(queue);
