@@ -15,27 +15,26 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
- * JMS message with text and properties. Each message hat unique ID
+ * JMS message with text and properties. Each message has unique ID
  *
  */
-public class SimpleMessage implements Serializable, Comparable<SimpleMessage> {
+public final class SimpleMessage implements Serializable, Comparable<SimpleMessage> {
 	private static final long serialVersionUID = 1L;
 	private static final AtomicLong SEQ = new AtomicLong(1);
 
 	private final Long id = SEQ.getAndIncrement();
 	private final LocalDateTime timestamp = LocalDateTime.now();
-	private String text;
-	private String queue;
+	private final String text;
+	private final String queue;
 
-	private Map<String, String> props = new HashMap<String, String>();
+	private final Map<String, String> props;
 
 	public static SimpleMessage of(SimpleMessage message) {
-		SimpleMessage copy = new SimpleMessage();
-		copy.props = new HashMap<>(message.props);
-		copy.text = message.text;
-		copy.queue = message.queue;
-		return copy;
+		return new SimpleMessage(message.text, message.queue, new HashMap<>(message.props));
 	}
 
 	@DateTimeFormat(iso = ISO.DATE_TIME)
@@ -51,25 +50,19 @@ public class SimpleMessage implements Serializable, Comparable<SimpleMessage> {
 		return id;
 	}
 
-	public void setText(String text) {
-		this.text = text;
-	}
-
-	public SimpleMessage() {
-	}
-
 	public SimpleMessage(String text, String queue) {
 		this(text, queue, Collections.<String, String>emptyMap());
 	}
-	
+
 	public SimpleMessage(Path content, String queue) throws IOException {
-			byte[] raw = Files.readAllBytes(content);
-			String message = new String(raw, Charset.forName("UTF-8"));
-			this.text = message;
-			this.queue = queue;
+		this(new String(Files.readAllBytes(content), Charset.forName("UTF-8")), queue);
 	}
 
-	public SimpleMessage(String text, String queue, Map<String, String> props) {
+	@JsonCreator
+	public SimpleMessage( //
+			@JsonProperty("text") String text, //
+			@JsonProperty("queue") String queue, //
+			@JsonProperty("props") Map<String, String> props) {
 		this.text = text;
 		this.queue = queue;
 		this.props = props;
@@ -79,21 +72,13 @@ public class SimpleMessage implements Serializable, Comparable<SimpleMessage> {
 		return queue;
 	}
 
-	public void setQueue(String queue) {
-		this.queue = queue;
-	}
-
 	public Map<String, String> getProps() {
 		return props;
 	}
 
-	public void setProps(Map<String, String> props) {
-		this.props = props;
-	}
-
 	@Override
 	public int hashCode() {
-		return Objects.hash(queue, text, timestamp);
+		return Objects.hash(id, queue, text, timestamp, props);
 	}
 
 	@Override
@@ -107,12 +92,12 @@ public class SimpleMessage implements Serializable, Comparable<SimpleMessage> {
 		final SimpleMessage other = (SimpleMessage) obj;
 
 		return Objects.equals(this.id, other.id) && Objects.equals(this.timestamp, other.timestamp)
-				&& Objects.equals(this.text, other.text) && Objects.equals(this.queue, other.queue);
+				&& Objects.equals(this.text, other.text) && Objects.equals(this.queue, other.queue)
+				&& Objects.equals(this.props, other.props);
 	}
 
 	@Override
 	public int compareTo(SimpleMessage o) {
 		return this.id.compareTo(o.id);
 	}
-
 }
