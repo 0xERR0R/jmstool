@@ -19,6 +19,8 @@ import { ErrorHandler } from '@angular/core';
 import { NotificationErrorHandler } from './errorhandler';
 import { WorkInProgressComponent } from './work-in-progress/work-in-progress.component';
 import { SettingsComponent } from './settings/settings.component';
+import { MessageModalDialogComponent } from './message-modal-dialog/message-modal-dialog.component';
+
 
 @NgModule({
   declarations: [
@@ -31,7 +33,8 @@ import { SettingsComponent } from './settings/settings.component';
     MessagesComponent,
     AbbreviatePipe,
     WorkInProgressComponent,
-    SettingsComponent
+    SettingsComponent,
+    MessageModalDialogComponent
   ],
   imports: [
     BrowserModule,
