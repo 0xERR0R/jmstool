@@ -10,7 +10,7 @@ export class SettingsComponent {
 
   @ViewChild('childModal') public childModal: ModalDirective;
 
-  queueStatus: Array<any> = [];
+  queueStatus: Array<{queue: string, running: boolean}> = [];
 
   constructor(private messagesService: MessagesService) {
 
@@ -18,13 +18,13 @@ export class SettingsComponent {
 
   private loadListenerStatus() {
     this.messagesService.getListenerStatus().subscribe(
-      result => result.forEach((running, queue) => {
-        var element = this.queueStatus.find(q => q.queue == queue);
+      result => result.forEach((running: boolean, queue: string) => {
+        const element = this.queueStatus.find(q => q.queue === queue);
         if (element) {
           element.running = running;
         }
         else {
-          this.queueStatus.push({ "queue": queue, "running": running });
+          this.queueStatus.push({ 'queue': queue, 'running': running });
         }
       }));
   }
