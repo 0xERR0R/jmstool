@@ -2,7 +2,6 @@ package jmstool;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.convert.ConversionService;
@@ -22,6 +21,12 @@ import jmstool.storage.LocalMessageStorage;
 @EnableJms
 public class Jmstool2Application extends SpringBootServletInitializer {
 
+	static {
+		// LocalDateTime should be serialized in a string, which can be read in
+		// javascript
+		System.setProperty("spring.jackson.serialization.write_dates_as_timestamps", "false");
+	}
+
 	@Bean
 	public TaskExecutor taskExecutor() {
 		return new SimpleAsyncTaskExecutor();
@@ -30,12 +35,6 @@ public class Jmstool2Application extends SpringBootServletInitializer {
 	@Bean
 	public CommandLineRunner asyncMessageSenderExecutorRunner(TaskExecutor executor, AsyncMessageSender sender) {
 		return (args) -> executor.execute(sender);
-	}
-
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(Jmstool2Application.class)
-				.properties("spring.jackson.serialization.write_dates_as_timestamps=false");
 	}
 
 	@Bean
