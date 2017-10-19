@@ -5,6 +5,9 @@ import static jmstool.controller.ApiController.URL_API_MESSAGES;
 import static jmstool.controller.ApiController.URL_API_PROPERTIES;
 import static jmstool.controller.ApiController.URL_API_QUEUES;
 import static jmstool.controller.ApiController.URL_API_SEND;
+import static jmstool.controller.ApiController.URL_API_START_LISTENER;
+import static jmstool.controller.ApiController.URL_API_STATUS_LISTENER;
+import static jmstool.controller.ApiController.URL_API_STOP_LISTENER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasSize;
@@ -191,6 +194,36 @@ public class ApiControllerITest {
 				.param("messageType", "WRONG") //
 				.param("lastId", "0") //
 				.param("maxCount", "200")) //
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	public void statusListenerAfterStoppingShouldReturnCorrectResult() throws Exception {
+		// both listener are running
+		mockMvc.perform(get(URL_API_STATUS_LISTENER)) //
+				.andExpect(status().isOk()) //
+				.andExpect(content().json(" {\"java:comp/env/jms/in1\":true,\"java:comp/env/jms/in2\":true}"));
+
+		// stop listener for queue in1
+		mockMvc.perform(post(URL_API_STOP_LISTENER) //
+				.param("queue", "java:comp/env/jms/in1")) //
+				.andExpect(status().isOk());
+
+		// only one is running now
+		mockMvc.perform(get(URL_API_STATUS_LISTENER)) //
+				.andExpect(status().isOk()) //
+				.andExpect(content().json(" {\"java:comp/env/jms/in1\":false,\"java:comp/env/jms/in2\":true}"));
+
+		// start listener again
+		mockMvc.perform(post(URL_API_START_LISTENER) //
+				.param("queue", "java:comp/env/jms/in1")) //
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	public void stopListenerForWrongQueueShoudReturnBadRequest() throws Exception {
+		mockMvc.perform(post(URL_API_STOP_LISTENER) //
+				.param("queue", "java:comp/env/jms/wrongQueue")) //
 				.andExpect(status().isBadRequest());
 	}
 
