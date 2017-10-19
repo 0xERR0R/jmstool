@@ -4,7 +4,7 @@ import static jmstool.controller.ApiController.URL_API_BULK_FILE;
 import static jmstool.controller.ApiController.URL_API_MESSAGES;
 import static jmstool.controller.ApiController.URL_API_PROPERTIES;
 import static jmstool.controller.ApiController.URL_API_QUEUES;
-import static jmstool.controller.ApiController.URL_API_SEND;
+import static jmstool.controller.ApiController.*;
 import static jmstool.controller.ApiController.URL_API_START_LISTENER;
 import static jmstool.controller.ApiController.URL_API_STATUS_LISTENER;
 import static jmstool.controller.ApiController.URL_API_STOP_LISTENER;
@@ -195,6 +195,13 @@ public class ApiControllerITest {
 				.param("lastId", "0") //
 				.param("maxCount", "200")) //
 				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	public void workInProgressShouldReturn0PendingCount() throws Exception {
+		mockMvc.perform(get(URL_API_WORK_IN_PROGRESS)) //
+				.andExpect(status().isOk()) //
+				.andExpect(content().json("{\"pendingCount\":0,\"totalErrorCount\":0}"));
 	}
 
 	@Test
