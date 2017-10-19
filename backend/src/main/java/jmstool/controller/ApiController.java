@@ -22,14 +22,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import jmstool.BadRequestException;
 import jmstool.QueueManager;
 import jmstool.jms.AsyncMessageSender;
 import jmstool.jms.AsyncMessageSender.Stats;
@@ -167,5 +171,10 @@ public class ApiController {
 			logger.error("can't create message from file '{}'", path, e);
 			throw new RuntimeException(e);
 		}
+	}
+
+	@ExceptionHandler(BadRequestException.class)
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	protected void badRequestExceptionExceptionHandler() {
 	}
 }
