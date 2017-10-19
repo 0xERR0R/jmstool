@@ -89,13 +89,10 @@ public class ApiController {
 			@RequestParam int maxCount) {
 
 		Collection<SimpleMessage> result = null;
-		switch (messageType) {
-		case INCOMING:
+		if (messageType.equals(MessageType.INCOMING)) {
 			result = incomingStorage.getMessagesAfter(lastId);
-			break;
-		case OUTGOING:
+		} else {
 			result = outgoingStorage.getMessagesAfter(lastId);
-			break;
 		}
 
 		// sort and limit
