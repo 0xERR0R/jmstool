@@ -25,6 +25,8 @@ import org.springframework.jms.support.destination.JndiDestinationResolver;
 import org.springframework.jndi.JndiLocatorDelegate;
 import org.springframework.stereotype.Component;
 
+import com.machinezoo.noexception.Exceptions;
+
 import jmstool.jms.JmsMessageListener;
 import jmstool.storage.LocalMessageStorage;
 
@@ -65,12 +67,12 @@ public class QueueManager implements CommandLineRunner {
 		}
 	}
 
-	private void registerOutgoingQueue(final String queue) throws NamingException {
+	private void registerOutgoingQueue(final String queue) {
 		logger.info("lookup outgoing queue '{}'", queue);
 		lookupQueue(queue);
 	}
 
-	private void registerIncomingQueue(final String queue) throws NamingException {
+	private void registerIncomingQueue(final String queue) {
 		logger.info("registering listener for incoming queue '{}'", queue);
 
 		// lookup to fail fast
@@ -80,13 +82,8 @@ public class QueueManager implements CommandLineRunner {
 		c.start();
 	}
 
-	private void lookupQueue(String queue) throws NamingException {
-		try {
-			new JndiLocatorDelegate().lookup(queue, Queue.class);
-		} catch (NamingException e) {
-			logger.error("unable to lookup the queue '{}'", queue, e);
-			throw e;
-		}
+	private void lookupQueue(String queue) {
+		Exceptions.sneak().get(() -> new JndiLocatorDelegate().lookup(queue, Queue.class));
 	}
 
 	private DefaultMessageListenerContainer createContainer(String queue) {

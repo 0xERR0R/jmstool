@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.machinezoo.noexception.Exceptions;
+
 import jmstool.BadRequestException;
 import jmstool.QueueManager;
 import jmstool.jms.AsyncMessageSender;
@@ -133,12 +135,12 @@ public class ApiController {
 
 		final AtomicInteger count = new AtomicInteger();
 		for (Path path : FileSystems.newFileSystem(tempFile, null).getRootDirectories()) {
-			Files.walk(path).filter(p -> Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS))
+			Files.walk(path) //
+					.filter(p -> Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS))
 					.peek(p -> logger.debug("iterating over file in archive '{}'", p))
 					.peek(p -> count.incrementAndGet())
-					.forEach(p -> messageSender.send(createSimpleMessageFromPath(p, queue)));
+					.forEach(Exceptions.sneak().consumer(p -> messageSender.send(new SimpleMessage(p, queue))));
 		}
-
 		Files.delete(tempFile);
 
 		return Collections.singletonMap("count", Integer.toString(count.get()));
@@ -162,15 +164,6 @@ public class ApiController {
 	@PostMapping(URL_API_START_LISTENER)
 	public void startListener(@RequestParam String queue) {
 		queueManager.startListener(queue);
-	}
-
-	private SimpleMessage createSimpleMessageFromPath(Path path, String queue) {
-		try {
-			return new SimpleMessage(path, queue);
-		} catch (IOException e) {
-			logger.error("can't create message from file '{}'", path, e);
-			throw new RuntimeException(e);
-		}
 	}
 
 	@ExceptionHandler(BadRequestException.class)

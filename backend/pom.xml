@@ -76,11 +76,16 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-    	<groupId>nl.jqno.equalsverifier</groupId>
-    	<artifactId>equalsverifier</artifactId>
-    	<version>2.3.3</version>
-    	<scope>test</scope>
-	</dependency>
+			<groupId>nl.jqno.equalsverifier</groupId>
+			<artifactId>equalsverifier</artifactId>
+			<version>2.3.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.machinezoo.noexception</groupId>
+			<artifactId>noexception</artifactId>
+			<version>1.2.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>jmstool</finalName>
