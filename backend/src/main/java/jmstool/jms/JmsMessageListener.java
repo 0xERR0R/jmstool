@@ -1,5 +1,6 @@
 package jmstool.jms;
 
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -41,28 +42,19 @@ public class JmsMessageListener implements MessageListener {
 	@Override
 	public void onMessage(Message msg) {
 		logger.debug("received new message from queue '{}'", queue);
-		if (msg instanceof TextMessage) {
-			TextMessage textMessage = (TextMessage) msg;
-			SimpleMessage message = new SimpleMessage(Exceptions.sneak().get(() -> textMessage.getText()), queue,
-					getMessageProperties(msg));
-			storage.addMessage(message);
-		} else {
-			// TODO convert to text
-			throw new RuntimeException("Only text messages are supported");
-		}
+		TextMessage textMessage = (TextMessage) msg;
+		SimpleMessage message = new SimpleMessage(Exceptions.sneak().get(() -> textMessage.getText()), queue,
+				getMessageProperties(msg));
+		storage.addMessage(message);
 	}
 
 	public Map<String, String> getMessageProperties(Message msg) {
 		Map<String, String> msgProps = new HashMap<>();
 		@SuppressWarnings("unchecked")
 		Enumeration<String> propertyNames = Exceptions.sneak().get(() -> msg.getPropertyNames());
-		while (propertyNames != null && propertyNames.hasMoreElements()) {
-			String propertyName = propertyNames.nextElement();
-			if (propertiesToExtract.contains(propertyName)) {
-				String stringValue = Exceptions.sneak().get(() -> msg.getStringProperty(propertyName));
-				msgProps.put(propertyName, stringValue);
-			}
-		}
+
+		Collections.list(propertyNames).stream().filter(p -> propertiesToExtract.contains(p))
+				.forEach(p -> msgProps.put(p, Exceptions.sneak().get(() -> msg.getStringProperty(p))));
 		return msgProps;
 	}
 }
