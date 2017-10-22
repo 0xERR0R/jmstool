@@ -57,13 +57,8 @@ public class AsyncMessageSender implements Runnable {
 		return new Stats(pendingMessages.size(), errorCounter.get());
 	}
 
-	public void send(SimpleMessage message) {
-		try {
-			pendingMessages.put(message);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			logger.error("execution was interrupted");
-		}
+	public void send(SimpleMessage message) throws InterruptedException {
+		pendingMessages.put(message);
 	}
 
 	@Override

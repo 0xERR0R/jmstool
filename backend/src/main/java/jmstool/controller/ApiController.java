@@ -112,7 +112,8 @@ public class ApiController {
 		for (int i = 0; i < total; i++) {
 			logger.debug("sending new message '{}' to queue '{}' with props '{}' count {}/{} ", message.getText(),
 					message.getQueue(), message.getProps(), i + 1, total);
-			messageSender.send(message);
+			Exceptions.sneak().run(()->messageSender.send(message));
+			
 		}
 
 	}
