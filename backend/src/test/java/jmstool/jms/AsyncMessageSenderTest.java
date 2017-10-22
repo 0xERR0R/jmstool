@@ -6,10 +6,12 @@ import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.jms.JMSException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,7 +19,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.support.destination.DestinationResolutionException;
 
 import jmstool.model.SimpleMessage;
 import jmstool.storage.LocalMessageStorage;
@@ -65,5 +69,14 @@ public class AsyncMessageSenderTest {
 						message.getText().equals("test")));
 
 		assertThat(sut.getStats().getPendingCount()).isEqualTo(0);
+	}
+
+	@Test
+	public void jmsExceptionIncreasesTotalErrorCount() throws InterruptedException {
+		doThrow(new DestinationResolutionException("test")).when(jmsTemplate).send(anyString(), any());
+		sut.send(new SimpleMessage("test", "queue"));
+		executor.execute(sut);
+
+		await().until(() -> sut.getStats().getTotalErrorCount() == 1);
 	}
 }
