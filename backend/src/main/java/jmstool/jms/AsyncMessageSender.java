@@ -25,6 +25,16 @@ public class AsyncMessageSender implements Runnable {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	private final AtomicInteger errorCounter = new AtomicInteger();
+
+	@Autowired
+	protected JmsTemplate jmsTemplate;
+
+	@Resource(name = "outgoingStorage")
+	protected LocalMessageStorage outgoingStorage;
+
+	private final BlockingQueue<SimpleMessage> pendingMessages = new LinkedBlockingQueue<>();
+
 	public final static class Stats {
 		private final int pendingCount;
 		private final int totalErrorCount;
@@ -42,16 +52,6 @@ public class AsyncMessageSender implements Runnable {
 			return totalErrorCount;
 		}
 	}
-
-	private final AtomicInteger errorCounter = new AtomicInteger();
-
-	@Autowired
-	protected JmsTemplate jmsTemplate;
-
-	@Resource(name = "outgoingStorage")
-	protected LocalMessageStorage outgoingStorage;
-
-	private final BlockingQueue<SimpleMessage> pendingMessages = new LinkedBlockingQueue<>();
 
 	public Stats getStats() {
 		return new Stats(pendingMessages.size(), errorCounter.get());
