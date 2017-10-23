@@ -51,7 +51,7 @@ export class MessagesService {
   }
 
   getListenerStatus(): Observable<Map<String, Object>> {
-    return this.http.get('/api/statusListener')
+    return this.http.get('api/statusListener')
       .map((res: Response) => this.convertToMap(res.json()));
   }
 
@@ -78,7 +78,7 @@ export class MessagesService {
   }
 
   private convertToMap(json): Map<String, Object> {
-    let result = new Map();
+    const result = new Map();
     Object.keys(json).forEach(k => result.set(k, json[k]));
 
     return result;
