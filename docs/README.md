@@ -1,4 +1,4 @@
-## JmsTool [![Build Status](https://travis-ci.org/0xERR0R/jmstool.svg?branch=develop)](https://travis-ci.org/0xERR0R/jmstool)[![codecov](https://codecov.io/gh/0xERR0R/jmstool/branch/develop/graph/badge.svg)](https://codecov.io/gh/0xERR0R/jmstool)
+## JmsTool [![Build Status](https://travis-ci.org/0xERR0R/jmstool.svg?branch=develop)](https://travis-ci.org/0xERR0R/jmstool)[![codecov](https://codecov.io/gh/0xERR0R/jmstool/branch/develop/graph/badge.svg)](https://codecov.io/gh/0xERR0R/jmstool)[![codebeat badge](https://codebeat.co/badges/2998082f-866f-4688-824b-4bc1742d31a8)](https://codebeat.co/projects/github-com-0xerr0r-jmstool-develop)
 This is a simple web app (Angular frontend and Spring backend) to receive and send JMS messages in an J2EE container (Apache Tomcat, IBM WebSphere, ...)
 ![Screenshot](screenshot.png "Main Window")
 
