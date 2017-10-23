@@ -12,7 +12,6 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
-import javax.naming.NamingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
