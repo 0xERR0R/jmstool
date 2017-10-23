@@ -22,8 +22,7 @@ export class SettingsComponent {
         const element = this.queueStatus.find(q => q.queue === queue);
         if (element) {
           element.running = running;
-        }
-        else {
+        } else {
           this.queueStatus.push({ 'queue': queue, 'running': running });
         }
       }));
