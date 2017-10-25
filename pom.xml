@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>jmstool</groupId>
-	<artifactId>jmstool2</artifactId>
+	<artifactId>jmstool</artifactId>
 	<version>1.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>jmstool2</name>
+	<name>jmstool</name>
 	<description>JmsTool parent project</description>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
