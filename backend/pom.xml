@@ -9,7 +9,7 @@
 
 	<parent>
 		<groupId>jmstool</groupId>
-		<artifactId>jmstool2</artifactId>
+		<artifactId>jmstool</artifactId>
 		<version>1.3-SNAPSHOT</version>
 	</parent>
 	<properties>
