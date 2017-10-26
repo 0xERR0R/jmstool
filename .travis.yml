@@ -1,8 +1,15 @@
-
 language: java
-sudo: false # faster builds
+sudo: false
+install: true
 
-script: "mvn clean install"
+jdk:
+  - oraclejdk8
+script:
+  - mvn clean install sonar:sonar -Dsonar.organization=0xerr0r-github -Dsonar.host.url=https://sonarqube.com -Dsonar.login=$SONAR_TOKEN
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
