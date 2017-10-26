@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>jmstool</groupId>
@@ -8,6 +9,10 @@
 	<packaging>pom</packaging>
 
 	<name>jmstool</name>
+	<url>https://github.com/0xERR0R/jmstool</url>
+	<scm>
+		<url>https://github.com/0xERR0R/jmstool</url>
+	</scm>
 	<description>JmsTool parent project</description>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -28,9 +33,9 @@
 				<artifactId>jgitflow-maven-plugin</artifactId>
 				<version>1.0-m5.1</version>
 				<configuration>
-				   <noDeploy>true</noDeploy>
-				   <squash>true</squash>
-                   <scmCommentPrefix>[RELEASE] </scmCommentPrefix>
+					<noDeploy>true</noDeploy>
+					<squash>true</squash>
+					<scmCommentPrefix>[RELEASE] </scmCommentPrefix>
 				</configuration>
 			</plugin>
 			<plugin>
