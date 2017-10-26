@@ -6,6 +6,11 @@
 
 	<name>frontend</name>
 	<description>JmsTool frontend</description>
+	
+	 <properties>
+    <sonar.sources>src/main/frontend/src</sonar.sources>
+    <sonar.exclusions>=**/node_modules/**,**/*.spec.ts,**/src/styles/**</sonar.exclusions>
+  </properties>
 
 	<parent>
 		<groupId>jmstool</groupId>
