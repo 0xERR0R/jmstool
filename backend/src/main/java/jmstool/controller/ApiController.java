@@ -1,7 +1,6 @@
 package jmstool.controller;
 
 import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -133,17 +132,15 @@ public class ApiController {
 		logger.debug("processing archive file '{}', queue '{}'", file.getOriginalFilename(), queue);
 
 		final AtomicInteger count = new AtomicInteger();
-		try (FileSystem fs = FileSystems.newFileSystem(tempFile, null)) {
-			Iterable<Path> rootDirectories = fs.getRootDirectories();
-			for (Path path : rootDirectories) {
-				Files.walk(path) //
-						.filter(p -> Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS))
-						.peek(p -> logger.debug("iterating over file in archive '{}'", p))
-						.peek(p -> count.incrementAndGet())
-						.forEach(Exceptions.sneak().consumer(p -> messageSender.send(new SimpleMessage(p, queue))));
-			}
-			Files.delete(tempFile);
+		Iterable<Path> rootDirectories = FileSystems.newFileSystem(tempFile, null).getRootDirectories();
+		for (Path path : rootDirectories) {
+			Files.walk(path) //
+					.filter(p -> Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS))
+					.peek(p -> logger.debug("iterating over file in archive '{}'", p))
+					.peek(p -> count.incrementAndGet())
+					.forEach(Exceptions.sneak().consumer(p -> messageSender.send(new SimpleMessage(p, queue))));
 		}
+		Files.delete(tempFile);
 
 		return Collections.singletonMap("count", Integer.toString(count.get()));
 	}
