@@ -12,21 +12,21 @@ public class LocalMessageStorageTest {
 
 	@Test
 	public void shouldReturnEmptyResultIfStorageIsEmpty() {
-		assertThat(sut.getMessagesAfter(0).isEmpty());
+		assertThat(sut.getMessagesAfter(0)).isEmpty();
 	}
 
 	@Test
 	public void shouldReturnAllElementsIfIdIs0() {
-		sut.addMessage(new SimpleMessage("a","b"));
-		sut.addMessage(new SimpleMessage("a","b"));
+		sut.addMessage(new SimpleMessage("a", "b"));
+		sut.addMessage(new SimpleMessage("a", "b"));
 
 		assertThat(sut.getMessagesAfter(0)).hasSize(2);
 	}
 
 	@Test
 	public void shouldReturnAllElementsIfIdIsSmaler() {
-		SimpleMessage message1 = new SimpleMessage("a","b");
-		SimpleMessage message2 = new SimpleMessage("a","b");
+		SimpleMessage message1 = new SimpleMessage("a", "b");
+		SimpleMessage message2 = new SimpleMessage("a", "b");
 		ReflectionTestUtils.setField(message1, "id", 25L);
 		ReflectionTestUtils.setField(message2, "id", 35L);
 		sut.addMessage(message1);
@@ -37,8 +37,8 @@ public class LocalMessageStorageTest {
 
 	@Test
 	public void shouldReturnEmptyListIfIdIsGreater() {
-		SimpleMessage message1 = new SimpleMessage("a","b");
-		SimpleMessage message2 = new SimpleMessage("a","b");
+		SimpleMessage message1 = new SimpleMessage("a", "b");
+		SimpleMessage message2 = new SimpleMessage("a", "b");
 		ReflectionTestUtils.setField(message1, "id", 25L);
 		ReflectionTestUtils.setField(message2, "id", 35L);
 		sut.addMessage(message1);
@@ -49,8 +49,8 @@ public class LocalMessageStorageTest {
 
 	@Test
 	public void shouldReturnOneElement() {
-		SimpleMessage message1 = new SimpleMessage("a","b");
-		SimpleMessage message2 = new SimpleMessage("a","b");
+		SimpleMessage message1 = new SimpleMessage("a", "b");
+		SimpleMessage message2 = new SimpleMessage("a", "b");
 		ReflectionTestUtils.setField(message1, "id", 25L);
 		ReflectionTestUtils.setField(message2, "id", 35L);
 		ReflectionTestUtils.setField(message2, "id", 45L);
@@ -62,13 +62,13 @@ public class LocalMessageStorageTest {
 
 	@Test
 	public void testMaxSize() {
-		SimpleMessage first = new SimpleMessage("a","b");
+		SimpleMessage first = new SimpleMessage("a", "b");
 		sut.addMessage(first);
 
 		assertThat(sut.getMessagesAfter(0)).contains(first);
 
 		for (int i = 0; i < LocalMessageStorage.MAX_COUNT; i++) {
-			sut.addMessage(new SimpleMessage("a","b"));
+			sut.addMessage(new SimpleMessage("a", "b"));
 		}
 
 		// first message is not in the storage
