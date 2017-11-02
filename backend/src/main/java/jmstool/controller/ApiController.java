@@ -1,6 +1,7 @@
 package jmstool.controller;
 
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -112,8 +113,8 @@ public class ApiController {
 		for (int i = 0; i < total; i++) {
 			logger.debug("sending new message '{}' to queue '{}' with props '{}' count {}/{} ", message.getText(),
 					message.getQueue(), message.getProps(), i + 1, total);
-			Exceptions.sneak().run(()->messageSender.send(message));
-			
+			Exceptions.sneak().run(() -> messageSender.send(message));
+
 		}
 
 	}
@@ -132,14 +133,17 @@ public class ApiController {
 		logger.debug("processing archive file '{}', queue '{}'", file.getOriginalFilename(), queue);
 
 		final AtomicInteger count = new AtomicInteger();
-		for (Path path : FileSystems.newFileSystem(tempFile, null).getRootDirectories()) {
-			Files.walk(path) //
-					.filter(p -> Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS))
-					.peek(p -> logger.debug("iterating over file in archive '{}'", p))
-					.peek(p -> count.incrementAndGet())
-					.forEach(Exceptions.sneak().consumer(p -> messageSender.send(new SimpleMessage(p, queue))));
+		try (FileSystem fs = FileSystems.newFileSystem(tempFile, null)) {
+			Iterable<Path> rootDirectories = fs.getRootDirectories();
+			for (Path path : rootDirectories) {
+				Files.walk(path) //
+						.filter(p -> Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS))
+						.peek(p -> logger.debug("iterating over file in archive '{}'", p))
+						.peek(p -> count.incrementAndGet())
+						.forEach(Exceptions.sneak().consumer(p -> messageSender.send(new SimpleMessage(p, queue))));
+			}
+			Files.delete(tempFile);
 		}
-		Files.delete(tempFile);
 
 		return Collections.singletonMap("count", Integer.toString(count.get()));
 	}
