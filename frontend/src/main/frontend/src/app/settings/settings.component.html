@@ -1,0 +1,40 @@
+<button type="button" class="btn btn-primary btn-xs pull-right" (click)="showDialog()"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></button>
+<div bsModal #childModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body ">
+        <div class="panel panel-primary">
+          <div class="panel-heading"><span>Queue listeners</span></div>
+          <div class="panel-body">
+            <table class="table table-striped table-condensed table-hover ">
+              <thead>
+                <tr>
+                  <th>Queue</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let e of queueStatus">
+                  <td>{{e.queue}}</td>
+                  <td class="text-center">
+                    <div style="display: block; padding: 7px" [ngClass]="e.running ? 'label-success' : 'label-warning'" class="label ">{{e.running ? 'Running':'Stopped'}}</div>
+                  </td>
+                  <td>
+                    <button [disabled]="e.running" type="button" class="btn btn-primary btn-xs" (click)="startListener(e.queue)">
+                        <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                      </button>
+                    <button [disabled]="!e.running" type="button" class="btn btn-primary btn-xs" (click)="stopListener(e.queue)">
+                        <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                      </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm pull-right" (click)="hideChildModal()"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Close</button>
+      </div>
+    </div>
+  </div>
+</div>

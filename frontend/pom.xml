@@ -6,18 +6,23 @@
 
 	<name>frontend</name>
 	<description>JmsTool frontend</description>
+	
+	 <properties>
+    <sonar.sources>src/main/frontend/src</sonar.sources>
+    <sonar.exclusions>=**/node_modules/**,**/*.spec.ts,**/src/styles/**</sonar.exclusions>
+  </properties>
 
 	<parent>
 		<groupId>jmstool</groupId>
-		<artifactId>jmstool2</artifactId>
-		<version>1.2</version>
+		<artifactId>jmstool</artifactId>
+		<version>1.3</version>
 	</parent>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>com.google.code.maven-replacer-plugin</groupId>
 				<artifactId>maven-replacer-plugin</artifactId>
-				<version>1.3.2</version>
+				<version>1.4.1</version>
 				<executions>
 					<execution>
 						<phase>prepare-package</phase>
@@ -38,7 +43,7 @@
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.3</version>
+				<version>1.6</version>
 
 				<configuration>
 					<nodeVersion>v6.10.1</nodeVersion>

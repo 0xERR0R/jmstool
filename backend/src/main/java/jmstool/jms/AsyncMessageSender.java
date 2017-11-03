@@ -25,6 +25,16 @@ public class AsyncMessageSender implements Runnable {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	private final AtomicInteger errorCounter = new AtomicInteger();
+
+	@Autowired
+	protected JmsTemplate jmsTemplate;
+
+	@Resource(name = "outgoingStorage")
+	protected LocalMessageStorage outgoingStorage;
+
+	private final BlockingQueue<SimpleMessage> pendingMessages = new LinkedBlockingQueue<>();
+
 	public final static class Stats {
 		private final int pendingCount;
 		private final int totalErrorCount;
@@ -43,27 +53,12 @@ public class AsyncMessageSender implements Runnable {
 		}
 	}
 
-	private final AtomicInteger errorCounter = new AtomicInteger();
-
-	@Autowired
-	private JmsTemplate jmsTemplate;
-
-	@Resource(name = "outgoingStorage")
-	private LocalMessageStorage outgoingStorage;
-
-	private final BlockingQueue<SimpleMessage> pendingMessages = new LinkedBlockingQueue<>();
-
 	public Stats getStats() {
 		return new Stats(pendingMessages.size(), errorCounter.get());
 	}
 
-	public void send(SimpleMessage message) {
-		try {
-			pendingMessages.put(message);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			logger.error("execution was interrupted");
-		}
+	public void send(SimpleMessage message) throws InterruptedException {
+		pendingMessages.put(message);
 	}
 
 	@Override

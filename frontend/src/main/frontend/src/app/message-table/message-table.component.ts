@@ -18,15 +18,12 @@ export class MessageTableComponent implements OnInit, OnDestroy {
   public static readonly NEW_MESSAGE_INDICATOR_TIME_MS = 5000;
   public static readonly MAX_MESSAGES_TO_SHOW = 100;
 
-
-  @ViewChild('childModal') public childModal: ModalDirective;
-
   @Input() type: MessageType;
   @Input() showNotifications: boolean;
 
   messages: Array<SimpleMessage> = [];
   lastId: number = 0;
-  messageToShow: SimpleMessage;
+
   timerSubscription: Subscription;
   constructor(private messagesService: MessagesService, private notificationsService: NotificationsService) { }
 
@@ -40,27 +37,20 @@ export class MessageTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  public getKeys(obj): string[] {
-    return Object.keys(obj);
-  }
-
   private refreshData(): void {
     // get new messages since last update
     this.messagesService.getMessages(this.type, this.lastId, MessageTableComponent.MAX_MESSAGES_TO_SHOW).subscribe(
       result => {
         // set for new messages the isNew flag
-        result.forEach((message) => {
-          message.isNew = true;
-        });
+        result.forEach((message) => message.isNew = true);
 
         if (this.showNotifications && result.length > 0) {
           this.notificationsService.info('New Message', result.length + ' messages received', { timeOut: 2000 });
         }
 
         // reset this flag after some time
-        setTimeout(() => result.forEach((message) => {
-          message.isNew = false;
-        }), MessageTableComponent.NEW_MESSAGE_INDICATOR_TIME_MS);
+        setTimeout(() => result.forEach((message) => message.isNew = false),
+          MessageTableComponent.NEW_MESSAGE_INDICATOR_TIME_MS);
 
         // put new messages at the beginn (newest messages first)
         this.messages = result.concat(this.messages);
@@ -89,15 +79,5 @@ export class MessageTableComponent implements OnInit, OnDestroy {
 
   clear() {
     this.messages = [];
-  }
-
-  showMessage(message: SimpleMessage) {
-    console.log('showing message:' + message.text);
-    this.messageToShow = message;
-    this.childModal.show();
-  }
-
-  public hideChildModal(): void {
-    this.childModal.hide();
   }
 }
