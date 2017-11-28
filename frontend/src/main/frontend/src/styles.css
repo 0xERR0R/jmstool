@@ -20,6 +20,10 @@
   max-height: 600px;
 }
 
+.messageRow {
+  cursor: pointer;
+}
+
 #messageTabContent {
   height: 300px;
   overflow:auto;

@@ -7,7 +7,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr [class.newMessage]="message.isNew" *ngFor="let message of messages" (click)="messageModalDialog.showMessage(message)">
+    <tr class="messageRow" [class.newMessage]="message.isNew" *ngFor="let message of messages" (click)="messageModalDialog.showMessage(message)">
       <td>{{message.timestamp | date:'y-MM-dd H:mm:ss' }}</td>
       <td>{{message.queue}}</td>
       <td>{{message.text | abbreviate : 200}}</td>
