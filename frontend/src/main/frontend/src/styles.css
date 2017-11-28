@@ -25,6 +25,14 @@
   overflow:auto;
 }
 
+#newMessagePanel {
+  max-height: calc(100vh - 450px);
+  overflow-y: auto;
+}
+
+body {
+  font-size: 13px;
+}
 .newMessage {
   font-weight: bold;
 }
