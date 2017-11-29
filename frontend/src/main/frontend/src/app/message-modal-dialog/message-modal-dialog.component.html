@@ -5,7 +5,7 @@
         <div class="panel panel-primary">
           <div class="panel-heading">Message text</div>
           <div class="panel-body messageBodyText">
-            <pre id="messageContentText" class="pre-scrollable"><code>{{messageToShow ? messageToShow.text : '-'}}</code></pre>
+            <pre id="messageContentText" class="pre-scrollable"><code>{{messageToShow ? (messageToShow.text | beautifyXml) : '-'  }}</code></pre>
           </div>
         </div>
         <div *ngIf="messageToShow && getKeys(messageToShow.props).length > 0" class="panel panel-primary">

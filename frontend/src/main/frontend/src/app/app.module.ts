@@ -15,6 +15,7 @@ import { MessagesComponent } from './messages/messages.component';
 import { MessageTableComponent } from './message-table/message-table.component';
 import { OutgoingQueuesSelectComponent } from './outgoing-queues-select/outgoing-queues-select.component';
 import { AbbreviatePipe } from './abbreviate.pipe';
+import { BeautifyXmlPipe } from './beautify-xml.pipe';
 import { ErrorHandler } from '@angular/core';
 import { NotificationErrorHandler } from './errorhandler';
 import { WorkInProgressComponent } from './work-in-progress/work-in-progress.component';
@@ -32,6 +33,7 @@ import { MessageModalDialogComponent } from './message-modal-dialog/message-moda
     MessageTableComponent,
     MessagesComponent,
     AbbreviatePipe,
+    BeautifyXmlPipe,
     WorkInProgressComponent,
     SettingsComponent,
     MessageModalDialogComponent
