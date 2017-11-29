@@ -26,8 +26,13 @@
 }
 
 #messageTabContent {
-  height: 300px;
+  max-height: 40vh;
+  height: 40vh;
   overflow:auto;
+}
+
+#messageContentText {
+  font-size: 10px;
 }
 
 #newMessagePanel {
