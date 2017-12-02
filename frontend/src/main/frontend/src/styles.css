@@ -32,7 +32,8 @@
 }
 
 #messageContentText {
-  font-size: 10px;
+  font-size: 12px;
+  color: black;
   border-radius: 0;
   margin-bottom: 0;
 }
