@@ -5,6 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpModule } from '@angular/http';
 import { ModalModule } from 'ngx-bootstrap';
 import { SimpleNotificationsModule } from 'angular2-notifications';
+import { ClipboardModule } from 'ngx-clipboard';
 
 import { AppComponent } from './app.component';
 import { NewMessagePanelComponent } from './new-message-panel/new-message-panel.component';
@@ -44,7 +45,8 @@ import { MessageModalDialogComponent } from './message-modal-dialog/message-moda
     HttpModule,
     ModalModule.forRoot(),
     SimpleNotificationsModule.forRoot(),
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    ClipboardModule
   ],
   providers: [MessagesService, {provide: ErrorHandler, useClass: NotificationErrorHandler}],
   bootstrap: [AppComponent]

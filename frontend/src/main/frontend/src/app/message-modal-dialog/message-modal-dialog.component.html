@@ -18,7 +18,10 @@
             </samp>
           </div>
         </div>
+        <button *ngIf="messageToShow" data-toggle="tooltip" title="Copy message text to clipboard" type="button" class="btn btn-info btn-sm" aria-label="Copy text to clipboard" ngxClipboard [cbContent]="messageToShow.text">
+          <span class="glyphicon glyphicon-copy" aria-hidden="true"></span> Clipboard</button>
         <button type="button" class="btn btn-primary btn-sm pull-right" (click)="hideChildModal()"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Close</button>
+
       </div>
     </div>
   </div>
