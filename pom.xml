@@ -4,7 +4,7 @@
 
 	<groupId>jmstool</groupId>
 	<artifactId>jmstool</artifactId>
-	<version>1.4</version>
+	<version>1.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>jmstool</name>
