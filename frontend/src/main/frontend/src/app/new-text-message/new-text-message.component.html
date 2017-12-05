@@ -3,7 +3,7 @@
         <label>Destination queue</label>
         <outgoinig-queues-select (value)="selectedQueue=$event"></outgoinig-queues-select>
         <label for="messageTextArea">Message body</label>
-        <textarea name="messageBody" class="form-control" [(ngModel)]="messageBody" rows="7" ngModel placeholder="Message text" required></textarea>
+        <textarea name="messageBody" class="form-control" [(ngModel)]="messageBody" rows="9" ngModel placeholder="Message text" required></textarea>
     </div>
     <div *ngIf="properties.length > 0" class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <div class="panel panel-default">

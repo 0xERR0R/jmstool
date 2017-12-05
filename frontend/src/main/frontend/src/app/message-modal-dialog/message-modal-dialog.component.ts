@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, OnDestroy } from '@angular/core';
+import { Component, Input, ViewChild, OnDestroy } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { NotificationsService } from 'angular2-notifications';
 import { Observable } from 'rxjs/Rx';
@@ -12,8 +12,10 @@ import { MessagesService } from '../messages.service';
   templateUrl: './message-modal-dialog.component.html'
 })
 
-export class MessageModalDialogComponent {
+export class MessageModalDialogComponent 
+{
   messageToShow: SimpleMessage;
+  formatMessage: boolean = true;
 
   @ViewChild('childModal') public childModal: ModalDirective;
 

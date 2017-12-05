@@ -1,27 +1,34 @@
 <div bsModal #childModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-body ">
-        <div class="panel panel-primary">
-          <div class="panel-heading">Message text</div>
-          <div class="panel-body messageBodyText">
-            <samp>
-          {{messageToShow ? messageToShow.text : '-'}}
-        </samp>
-          </div>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Message text</div>
+                    <div class="panel-body messageBodyText">
+                        <pre id="messageContentText" class="pre-scrollable">
+                            <code>{{messageToShow ? (formatMessage ? (messageToShow.text | beautifyXml) : messageToShow.text) : '-'  }}</code>
+                        </pre>
+                    </div>
+                    <div id="formatMessage">
+                        <div class="input-group">
+                            <label><input type="checkbox" [(ngModel)]="formatMessage"/> Format message text</label>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="messageToShow && getKeys(messageToShow.props).length > 0" class="panel panel-primary">
+                    <div class="panel-heading">Properties</div>
+                    <div id="propertiesPanel" class="panel-body">
+                        <samp>
+                            <samp>
+                                <p *ngFor="let key of getKeys(messageToShow.props)">{{key}}: {{messageToShow.props[key]}}</p>
+                            </samp>
+                        </samp>
+                    </div>
+                </div>
+                <button *ngIf="messageToShow" data-toggle="tooltip" title="Copy message text to clipboard" type="button" class="btn btn-info btn-sm" aria-label="Copy text to clipboard" ngxClipboard [cbContent]="messageToShow.text">
+                    <span class="glyphicon glyphicon-copy" aria-hidden="true"></span> Clipboard</button>
+                <button type="button" class="btn btn-primary btn-sm pull-right" (click)="hideChildModal()"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Close</button>
+            </div>
         </div>
-        <div *ngIf="messageToShow && getKeys(messageToShow.props).length > 0" class="panel panel-primary">
-          <div class="panel-heading">Properties</div>
-          <div class="panel-body messageBodyText">
-            <samp>
-          <samp>
-          <p *ngFor="let key of getKeys(messageToShow.props)">{{key}}: {{messageToShow.props[key]}}</p>
-        </samp>
-            </samp>
-          </div>
-        </div>
-        <button type="button" class="btn btn-primary btn-sm pull-right" (click)="hideChildModal()"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Close</button>
-      </div>
     </div>
-  </div>
 </div>

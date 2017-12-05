@@ -1,13 +1,14 @@
 @import "./styles/css/bootstrap.min.css";
-
 .panel-heading {
   padding-top: 5px;
   padding-bottom: 5px;
 }
+
 .form-control {
   padding-top: 5px;
   padding-bottom: 5px;
   height: 35px;
+  font-size: 13px;
 }
 
 .modal-header {
@@ -20,9 +21,41 @@
   max-height: 600px;
 }
 
+.messageRow {
+  cursor: pointer;
+}
+
 #messageTabContent {
-  height: 300px;
-  overflow:auto;
+  max-height: 40vh;
+  height: 40vh;
+  overflow: auto;
+}
+
+#messageContentText {
+  font-size: 12px;
+  color: black;
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+#formatMessage {
+  padding-left: 10px;
+  border-top: 1px dashed black;
+}
+
+#propertiesPanel {
+  overflow-y: scroll;
+  max-height: 200px;
+}
+
+#newMessagePanel {
+  overflow-y: auto;
+}
+
+body {
+  font-size: 13px;
 }
 
 .newMessage {
@@ -30,10 +63,25 @@
 }
 
 .messageBodyText {
-  font-size: 0.9em;
-  line-height: 1.1;
+  padding: 0
 }
 
 .formGroup {
   margin-bottom: 10px;
+}
+
+footer {
+  max-height: 21px;
+  min-height: 21px;
+  color: white;
+  vertical-align: middle;
+  padding-left: 10px;
+  border-top: 1px dotted;
+  border-color: black;
+
+}
+
+.footer-link > a{
+  color: black;
+
 }
