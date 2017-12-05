@@ -17,7 +17,7 @@
                 </div>
                 <div *ngIf="messageToShow && getKeys(messageToShow.props).length > 0" class="panel panel-primary">
                     <div class="panel-heading">Properties</div>
-                    <div class="panel-body messageBodyText">
+                    <div id="propertiesPanel" class="panel-body">
                         <samp>
                             <samp>
                                 <p *ngFor="let key of getKeys(messageToShow.props)">{{key}}: {{messageToShow.props[key]}}</p>

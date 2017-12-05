@@ -1,65 +1,87 @@
 @import "./styles/css/bootstrap.min.css";
-
 .panel-heading {
-    padding-top: 5px;
-    padding-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
+
 .form-control {
-    padding-top: 5px;
-    padding-bottom: 5px;
-    height: 35px;
-    font-size: 13px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  height: 35px;
+  font-size: 13px;
 }
 
 .modal-header {
-    padding-top: 5px;
-    padding-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .modal-body {
-    overflow: auto;
-    max-height: 600px;
+  overflow: auto;
+  max-height: 600px;
 }
 
 .messageRow {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 #messageTabContent {
-    max-height: 40vh;
-    height: 40vh;
-    overflow:auto;
+  max-height: 40vh;
+  height: 40vh;
+  overflow: auto;
 }
 
 #messageContentText {
-    font-size: 12px;
-    color: black;
-    background-color: transparent;
-    border: 0;
-    border-radius: 0;
-    margin-bottom: 0;
+  font-size: 12px;
+  color: black;
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
+  margin-bottom: 0;
 }
 
 #formatMessage {
-    padding-left: 10px;
+  padding-left: 10px;
+  border-top: 1px dashed black;
+}
+
+#propertiesPanel {
+  overflow-y: scroll;
+  max-height: 200px;
 }
 
 #newMessagePanel {
-    overflow-y: auto;
+  overflow-y: auto;
 }
 
 body {
-    font-size: 13px;
+  font-size: 13px;
 }
+
 .newMessage {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .messageBodyText {
-    padding: 0
-
+  padding: 0
 }
 
 .formGroup {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+footer {
+  max-height: 21px;
+  min-height: 21px;
+  color: white;
+  vertical-align: middle;
+  padding-left: 10px;
+  border-top: 1px dotted;
+  border-color: black;
+
+}
+
+.footer-link > a{
+  color: black;
+
 }
