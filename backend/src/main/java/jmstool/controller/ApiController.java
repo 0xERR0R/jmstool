@@ -175,5 +175,6 @@ public class ApiController {
 	@ExceptionHandler(BadRequestException.class)
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	protected void badRequestExceptionExceptionHandler() {
+		logger.warn("Bad request was received");
 	}
 }

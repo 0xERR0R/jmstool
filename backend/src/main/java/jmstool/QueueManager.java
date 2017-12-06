@@ -109,7 +109,9 @@ public class QueueManager implements CommandLineRunner {
 	}
 
 	public Map<String, Boolean> getListenerStatus() {
-		return containers.stream().collect(Collectors.toMap(c -> c.getDestinationName(), c -> c.isRunning()));
+		return containers.stream() //
+				.collect(Collectors.toMap(DefaultMessageListenerContainer::getDestinationName,
+						DefaultMessageListenerContainer::isRunning));
 
 	}
 
