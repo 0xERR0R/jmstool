@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler  } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpModule } from '@angular/http';
@@ -17,7 +17,6 @@ import { MessageTableComponent } from './message-table/message-table.component';
 import { OutgoingQueuesSelectComponent } from './outgoing-queues-select/outgoing-queues-select.component';
 import { AbbreviatePipe } from './abbreviate.pipe';
 import { BeautifyXmlPipe } from './beautify-xml.pipe';
-import { ErrorHandler } from '@angular/core';
 import { NotificationErrorHandler } from './errorhandler';
 import { WorkInProgressComponent } from './work-in-progress/work-in-progress.component';
 import { SettingsComponent } from './settings/settings.component';

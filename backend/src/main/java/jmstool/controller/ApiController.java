@@ -148,8 +148,7 @@ public class ApiController {
 	}
 
 	private Path createTempFile(MultipartFile file) throws IOException {
-		Path tempFile = Files.createTempFile(file.getOriginalFilename(), null, new FileAttribute[0]);
-		return tempFile;
+		return Files.createTempFile(file.getOriginalFilename(), null);
 	}
 
 	@GetMapping(URL_API_WORK_IN_PROGRESS)

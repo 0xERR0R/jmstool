@@ -38,7 +38,6 @@ public class QueueManagerTest {
 		sut.incomingLocalStorage = storage;
 
 		JMSMockObjectFactory f = new JMSMockObjectFactory();
-
 		sut.cf = f.getMockQueueConnectionFactory();
 
 		// create 2 queues
@@ -54,7 +53,7 @@ public class QueueManagerTest {
 	}
 
 	@Test(expected = NameNotFoundException.class)
-	public void lookupIncommingQueueWithWrongNameThrowsException() throws Exception {
+	public void lookupIncomingQueueWithWrongNameThrowsException() throws Exception {
 		sut.incomingQueues = Arrays.asList("java:comp/env/wrongName");
 		sut.run("");
 	}
