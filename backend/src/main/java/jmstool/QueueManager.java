@@ -48,7 +48,7 @@ public class QueueManager implements CommandLineRunner {
 	@Value("${jmstool.showMessagePropertiesForIncomingMessages:}")
 	protected List<String> incomingMessagesProperties = new ArrayList<>();
 
-	@Value("${jmstool.encoding:}")
+	@Value("${jmstool.encoding}")
 	protected String encoding = DEFAULT_ENCODING;
 
 	@Autowired
