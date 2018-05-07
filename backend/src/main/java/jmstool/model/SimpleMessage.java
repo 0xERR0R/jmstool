@@ -27,7 +27,7 @@ public final class SimpleMessage implements Serializable, Comparable<SimpleMessa
 	private static final AtomicLong SEQ = new AtomicLong(1);
 
 	private final Long id = SEQ.getAndIncrement();
-	private final LocalDateTime timestamp = LocalDateTime.now();
+	private final transient LocalDateTime timestamp = LocalDateTime.now();
 	private final String text;
 	private final String queue;
 
@@ -78,7 +78,7 @@ public final class SimpleMessage implements Serializable, Comparable<SimpleMessa
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, queue, text, timestamp, props);
+		return Objects.hash(id, queue, text, props);
 	}
 
 	@Override
@@ -91,9 +91,8 @@ public final class SimpleMessage implements Serializable, Comparable<SimpleMessa
 		}
 		final SimpleMessage other = (SimpleMessage) obj;
 
-		return Objects.equals(this.id, other.id) && Objects.equals(this.timestamp, other.timestamp)
-				&& Objects.equals(this.text, other.text) && Objects.equals(this.queue, other.queue)
-				&& Objects.equals(this.props, other.props);
+		return Objects.equals(this.id, other.id) && Objects.equals(this.text, other.text)
+				&& Objects.equals(this.queue, other.queue) && Objects.equals(this.props, other.props);
 	}
 
 	@Override

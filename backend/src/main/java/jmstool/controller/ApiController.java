@@ -1,10 +1,10 @@
 package jmstool.controller;
 
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
@@ -51,23 +52,23 @@ import jmstool.storage.LocalMessageStorage;
 public class ApiController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public final static String URL_API_MESSAGES = "/api/messages";
+	public static final String URL_API_MESSAGES = "/api/messages";
 
-	public final static String URL_API_SEND = "/api/send";
+	public static final String URL_API_SEND = "/api/send";
 
-	public final static String URL_API_QUEUES = "/api/queues";
+	public static final String URL_API_QUEUES = "/api/queues";
 
-	public final static String URL_API_PROPERTIES = "/api/properties";
+	public static final String URL_API_PROPERTIES = "/api/properties";
 
-	public final static String URL_API_BULK_FILE = "/api/bulkFile";
+	public static final String URL_API_BULK_FILE = "/api/bulkFile";
 
-	public final static String URL_API_WORK_IN_PROGRESS = "/api/workInProgress";
+	public static final String URL_API_WORK_IN_PROGRESS = "/api/workInProgress";
 
-	public final static String URL_API_STATUS_LISTENER = "/api/statusListener";
+	public static final String URL_API_STATUS_LISTENER = "/api/statusListener";
 
-	public final static String URL_API_STOP_LISTENER = "/api/stopListener";
+	public static final String URL_API_STOP_LISTENER = "/api/stopListener";
 
-	public final static String URL_API_START_LISTENER = "/api/startListener";
+	public static final String URL_API_START_LISTENER = "/api/startListener";
 
 	@Autowired
 	private AsyncMessageSender messageSender;
@@ -113,9 +114,7 @@ public class ApiController {
 			logger.debug("sending new message '{}' to queue '{}' with props '{}' count {}/{} ", message.getText(),
 					message.getQueue(), message.getProps(), i + 1, total);
 			Exceptions.sneak().run(() -> messageSender.send(message));
-
 		}
-
 	}
 
 	@GetMapping(URL_API_QUEUES)
@@ -125,24 +124,31 @@ public class ApiController {
 
 	@PostMapping(path = URL_API_BULK_FILE, consumes = { "multipart/*" })
 	public @ResponseBody Map<String, String> bulkSend(@RequestParam("file") MultipartFile file,
-			@RequestParam("queue") String queue) throws IOException, InterruptedException {
-		Path tempFile = Files.createTempFile(file.getOriginalFilename(), null, new FileAttribute[0]);
-		Files.write(tempFile, file.getBytes(), new OpenOption[0]);
+			@RequestParam("queue") String queue) throws IOException {
+		Path tempFile = createTempFile(file);
+		Files.write(tempFile, file.getBytes());
 
 		logger.debug("processing archive file '{}', queue '{}'", file.getOriginalFilename(), queue);
 
 		final AtomicInteger count = new AtomicInteger();
-		Iterable<Path> rootDirectories = FileSystems.newFileSystem(tempFile, null).getRootDirectories();
-		for (Path path : rootDirectories) {
-			Files.walk(path) //
-					.filter(p -> Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS))
-					.peek(p -> logger.debug("iterating over file in archive '{}'", p))
-					.peek(p -> count.incrementAndGet())
-					.forEach(Exceptions.sneak().consumer(p -> messageSender.send(new SimpleMessage(p, queue))));
+		try (FileSystem fs = FileSystems.newFileSystem(tempFile, null)) {
+			Iterable<Path> rootDirectories = fs.getRootDirectories();
+			for (Path path : rootDirectories) {
+				try (Stream<Path> s = Files.walk(path)) {
+					s.filter(p -> Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS))
+							.peek(p -> logger.debug("iterating over file in archive '{}'", p))
+							.peek(p -> count.incrementAndGet())
+							.forEach(Exceptions.sneak().consumer(p -> messageSender.send(new SimpleMessage(p, queue))));
+				}
+			}
 		}
 		Files.delete(tempFile);
 
 		return Collections.singletonMap("count", Integer.toString(count.get()));
+	}
+
+	private Path createTempFile(MultipartFile file) throws IOException {
+		return Files.createTempFile(file.getOriginalFilename(), null);
 	}
 
 	@GetMapping(URL_API_WORK_IN_PROGRESS)
@@ -168,5 +174,6 @@ public class ApiController {
 	@ExceptionHandler(BadRequestException.class)
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	protected void badRequestExceptionExceptionHandler() {
+		logger.warn("Bad request was received");
 	}
 }
