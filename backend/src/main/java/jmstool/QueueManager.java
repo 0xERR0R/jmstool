@@ -46,6 +46,9 @@ public class QueueManager implements CommandLineRunner {
 	@Value("${jmstool.showMessagePropertiesForIncomingMessages:}")
 	protected List<String> incomingMessagesProperties = new ArrayList<>();
 
+	@Value("${jmstool.encoding:UTF-8}")
+	protected String encoding;
+
 	@Autowired
 	protected ConnectionFactory cf;
 
@@ -90,7 +93,7 @@ public class QueueManager implements CommandLineRunner {
 		c.setConnectionFactory(cf);
 		c.setDestinationResolver(new JndiDestinationResolver());
 		c.setDestinationName(queue);
-		c.setMessageListener(new JmsMessageListener(queue, incomingLocalStorage, incomingMessagesProperties));
+		c.setMessageListener(new JmsMessageListener(queue, incomingLocalStorage, incomingMessagesProperties, encoding));
 		c.setAutoStartup(false);
 		c.afterPropertiesSet();
 		return c;
