@@ -1,6 +1,5 @@
 package jmstool.jms;
 
-import static jmstool.QueueManager.DEFAULT_ENCODING;
 import static jmstool.jms.JmsMessageListener.JMS_IBM_CHARACTER_SET;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -30,7 +29,7 @@ public class JmsMessageListenerTest {
 	@Before
 	public void setUp() {
 		storage = new LocalMessageStorage();
-		sut = new JmsMessageListener("myQueue", storage, Collections.singletonList("propA"), DEFAULT_ENCODING);
+		sut = new JmsMessageListener("myQueue", storage, Collections.singletonList("propA"), "UTF-8");
 	}
 
 	@Test
