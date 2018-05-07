@@ -37,8 +37,6 @@ import jmstool.storage.LocalMessageStorage;
 public class QueueManager implements CommandLineRunner {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public static final String DEFAULT_ENCODING = "UTF-8";
-
 	@Value("${jmstool.incomingQueues:}")
 	protected List<String> incomingQueues = new ArrayList<>();
 
@@ -48,8 +46,8 @@ public class QueueManager implements CommandLineRunner {
 	@Value("${jmstool.showMessagePropertiesForIncomingMessages:}")
 	protected List<String> incomingMessagesProperties = new ArrayList<>();
 
-	@Value("${jmstool.encoding}")
-	protected String encoding = DEFAULT_ENCODING;
+	@Value("${jmstool.encoding:UTF-8}")
+	protected String encoding;
 
 	@Autowired
 	protected ConnectionFactory cf;
