@@ -1,6 +1,5 @@
 package jmstool.jms;
 
-import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -16,6 +15,8 @@ import javax.jms.TextMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.jms.support.converter.SimpleMessageConverter;
 
 import com.machinezoo.noexception.Exceptions;
 
@@ -40,6 +41,8 @@ public class JmsMessageListener implements MessageListener {
 
 	private final String encoding;
 
+	private final MessageConverter messageConverter = new SimpleMessageConverter();
+
 	public JmsMessageListener(String queue, LocalMessageStorage storage, List<String> propertiesToExtract,
 			String encoding) {
 		super();
@@ -61,19 +64,10 @@ public class JmsMessageListener implements MessageListener {
 		String text = null;
 
 		if (msg instanceof TextMessage) {
-			TextMessage textMessage = (TextMessage) msg;
-			text = Exceptions.sneak().get(() -> textMessage.getText());
+			text = (String) messageConverter.fromMessage(msg);
 		} else if (msg instanceof BytesMessage) {
 			BytesMessage bytesMessage = (BytesMessage) msg;
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			int n = 0;
-			byte[] buf = new byte[(int) (bytesMessage.getBodyLength() > Integer.MAX_VALUE ? 1024
-					: bytesMessage.getBodyLength())];
-			while ((n = bytesMessage.readBytes(buf)) >= 0) {
-				out.write(buf, 0, n);
-			}
-			byte[] bytes = out.toByteArray();
-
+			byte[] bytes = (byte[]) messageConverter.fromMessage(bytesMessage);
 			text = new String(bytes, Charset.forName(encodingFromMessageOrDefault(bytesMessage)));
 		} else {
 			text = String.format("Unsupported message type: '%s'", msg.getClass().getName());
