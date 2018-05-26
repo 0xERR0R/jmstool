@@ -32,7 +32,7 @@ export class MessagesService {
     formData.append('queue', queue);
 
     return this.http.post('api/bulkFile', formData)
-      .map(res => res.json().count);
+      .map(res => parseInt(res.text()));
   }
 
   getServerWorkInProgress(): Observable<any> {
