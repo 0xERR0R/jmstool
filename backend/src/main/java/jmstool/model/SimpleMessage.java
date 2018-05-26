@@ -18,6 +18,8 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * JMS message with text and properties. Each message has unique ID
  *
@@ -26,11 +28,19 @@ public final class SimpleMessage implements Serializable, Comparable<SimpleMessa
 	private static final long serialVersionUID = 1L;
 	private static final AtomicLong SEQ = new AtomicLong(1);
 
+	@ApiModelProperty(notes = "Message ID")
 	private final Long id = SEQ.getAndIncrement();
+	
+	@ApiModelProperty(notes = "Receive/Send time")
 	private final transient LocalDateTime timestamp = LocalDateTime.now();
+	
+	@ApiModelProperty(notes = "Message text")
 	private final String text;
+	
+	@ApiModelProperty(notes = "Message destination queue")
 	private final String queue;
 
+	@ApiModelProperty(notes = "Message properties")
 	private final Map<String, String> props;
 
 	public static SimpleMessage of(SimpleMessage message) {

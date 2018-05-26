@@ -121,7 +121,7 @@ public class QueueManager implements CommandLineRunner {
 	private MessageListenerContainer findContainerForQueue(String queue) {
 		Optional<DefaultMessageListenerContainer> container = containers.stream()
 				.filter(c -> c.getDestinationName().equals(queue)).findFirst();
-		return container.orElseThrow(() -> new BadRequestException("Couldn't find a listener for queuev" + queue));
+		return container.orElseThrow(() -> new BadRequestException("Couldn't find a listener for queue" + queue));
 
 	}
 
