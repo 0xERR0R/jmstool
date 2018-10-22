@@ -1,0 +1,29 @@
+<Context>
+    <JarScanner scanClassPath="false" scanAllFiles="false" scanAllDirectories="false"/>
+
+  <Resource
+      name="jms/QCF"
+      auth="Container"
+      type="com.ibm.mq.jms.MQQueueConnectionFactory"
+      factory="com.ibm.mq.jms.MQQueueConnectionFactoryFactory"
+      HOST="websphereMQ"
+      PORT="1414"
+      CHAN="DEV.APP.SVRCONN"
+      TRAN="1"
+      QMGR="QM1"/>
+
+   <Resource
+      name="jms/QDEV1"
+      auth="Container"
+      type="com.ibm.mq.jms.MQQueue"
+      factory="com.ibm.mq.jms.MQQueueFactory"
+      QU="DEV.QUEUE.1"/>
+
+   <Resource
+      name="jms/QDEV2"
+      auth="Container"
+      type="com.ibm.mq.jms.MQQueue"
+      factory="com.ibm.mq.jms.MQQueueFactory"
+      QU="DEV.QUEUE.2"/>      
+
+</Context>
