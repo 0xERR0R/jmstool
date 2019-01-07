@@ -2,11 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ErrorHandler  } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpModule } from '@angular/http';
 import { ModalModule } from 'ngx-bootstrap';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 import { ClipboardModule } from 'ngx-clipboard';
-
 import { AppComponent } from './app.component';
 import { NewMessagePanelComponent } from './new-message-panel/new-message-panel.component';
 import { NewTextMessageComponent } from './new-text-message/new-text-message.component';
@@ -21,6 +19,7 @@ import { NotificationErrorHandler } from './errorhandler';
 import { WorkInProgressComponent } from './work-in-progress/work-in-progress.component';
 import { SettingsComponent } from './settings/settings.component';
 import { MessageModalDialogComponent } from './message-modal-dialog/message-modal-dialog.component';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
@@ -41,7 +40,7 @@ import { MessageModalDialogComponent } from './message-modal-dialog/message-moda
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule,
+    HttpClientModule,
     ModalModule.forRoot(),
     SimpleNotificationsModule.forRoot(),
     BrowserAnimationsModule,

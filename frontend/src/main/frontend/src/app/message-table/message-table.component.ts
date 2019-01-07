@@ -39,7 +39,9 @@ export class MessageTableComponent implements OnInit, OnDestroy {
 
   private refreshData(): void {
     // get new messages since last update
-    this.messagesService.getMessages(this.type, this.lastId, MessageTableComponent.MAX_MESSAGES_TO_SHOW).subscribe(
+    this.messagesService.getMessages(this.type, this.lastId, MessageTableComponent.MAX_MESSAGES_TO_SHOW)
+    .finally(() => this.subscribeToData())
+    .subscribe(
       result => {
         // set for new messages the isNew flag
         result.forEach((message) => message.isNew = true);
@@ -66,8 +68,7 @@ export class MessageTableComponent implements OnInit, OnDestroy {
             this.lastId = message.id;
           }
         }
-        this.subscribeToData();
-      }
+      } 
     );
   }
 
