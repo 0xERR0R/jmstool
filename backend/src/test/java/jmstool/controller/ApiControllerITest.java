@@ -188,7 +188,7 @@ public class ApiControllerITest {
 				.param("maxCount", "200")) //
 				.andExpect(status().isOk()) //
 				.andExpect(content().contentType("application/json;charset=UTF-8")) //
-				.andExpect(content().json("[]"));
+				.andExpect(content().json("{\"messages\":[], \"lastId\":0}"));
 
 		mockMvc.perform(get(URL_API_MESSAGES) //
 				.param("messageType", "OUTGOING") //
@@ -196,7 +196,7 @@ public class ApiControllerITest {
 				.param("maxCount", "200")) //
 				.andExpect(status().isOk()) //
 				.andExpect(content().contentType("application/json;charset=UTF-8")) //
-				.andExpect(content().json("[]"));
+				.andExpect(content().json("{\"messages\":[], \"lastId\":0}"));
 	}
 
 	@Test
@@ -260,11 +260,11 @@ public class ApiControllerITest {
 				.param("maxCount", "200")) //
 				.andExpect(status().isOk()) //
 				.andExpect(content().contentType("application/json;charset=UTF-8")) //
-				.andExpect(jsonPath("$", hasSize(2))) //
-				.andExpect(jsonPath("$[0].text", is("message in queue2"))) //
-				.andExpect(jsonPath("$[0].queue", is("java:comp/env/jms/in2"))) //
-				.andExpect(jsonPath("$[1].text", is("message in queue1"))) //
-				.andExpect(jsonPath("$[1].queue", is("java:comp/env/jms/in1")));
+				.andExpect(jsonPath("messages", hasSize(2))) //
+				.andExpect(jsonPath("messages[0].text", is("message in queue2"))) //
+				.andExpect(jsonPath("messages[0].queue", is("java:comp/env/jms/in2"))) //
+				.andExpect(jsonPath("messages[1].text", is("message in queue1"))) //
+				.andExpect(jsonPath("messages[1].queue", is("java:comp/env/jms/in1")));
 	}
 
 	@Test

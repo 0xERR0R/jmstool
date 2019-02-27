@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import javax.annotation.Resource;
@@ -42,6 +43,7 @@ import jmstool.BadRequestException;
 import jmstool.QueueManager;
 import jmstool.jms.AsyncMessageSender;
 import jmstool.jms.AsyncMessageSender.Stats;
+import jmstool.model.MessageResult;
 import jmstool.model.MessageType;
 import jmstool.model.SimpleMessage;
 import jmstool.storage.LocalMessageStorage;
@@ -89,20 +91,19 @@ public class ApiController {
 
 	@GetMapping(URL_API_MESSAGES)
 	@ApiOperation(value = "List of incoming or outgoing messages", tags = "read messages")
-	public List<SimpleMessage> getMessages(
+	public MessageResult getMessages(
 			@ApiParam(value = "message type", allowableValues = "INCOMING, OUTGOING", required = true) @RequestParam MessageType messageType, //
 			@ApiParam(value = "start id of message") @RequestParam(defaultValue = "0") Long lastId, //
 			@ApiParam(value = "Max count of messages to fetch") @RequestParam(defaultValue = "100") int maxCount) {
 
-		Collection<SimpleMessage> result = null;
-		if (messageType.equals(MessageType.INCOMING)) {
-			result = incomingStorage.getMessagesAfter(lastId);
-		} else {
-			result = outgoingStorage.getMessagesAfter(lastId);
-		}
+		LocalMessageStorage storage = messageType.equals(MessageType.INCOMING) ? incomingStorage : outgoingStorage;
+		Collection<SimpleMessage> result = storage.getMessagesAfter(lastId);
+
 
 		// sort and limit
-		return result.stream().sorted(Collections.reverseOrder()).limit(maxCount).collect(Collectors.toList());
+		List<SimpleMessage> messages = result.stream().sorted(Collections.reverseOrder()).limit(maxCount)
+				.collect(Collectors.toList());
+		return new MessageResult(messages, storage.getLastId());
 	}
 
 	@GetMapping(URL_API_PROPERTIES)

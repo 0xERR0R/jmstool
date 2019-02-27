@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Rx';
 import { MessageType } from './message-type';
 import { SimpleMessage } from './simple-message';
 import { RequestOptions, URLSearchParams, Headers } from '@angular/http';
+import { MessageResult } from './message-result';
 
 @Injectable()
 export class MessagesService {
@@ -37,14 +38,14 @@ export class MessagesService {
     return this._http.get('api/workInProgress');
   }
 
-  getMessages(messageType: MessageType, lastId: number, maxCount: number): Observable<Array<SimpleMessage>> {
+  getMessages(messageType: MessageType, lastId: number, maxCount: number): Observable<MessageResult> {
     let params = new HttpParams()
                  .set('messageType', messageType.toString())
                  .set('lastId', lastId.toString())
                  .set('maxCount', maxCount.toString());
 
     return this._http.get('api/messages', { params })
-      .map(this.convertToMessage);
+      .map(this.convertToMessageResult);
   }
 
   getListenerStatus(): Observable<Map<String, Object>> {
@@ -64,14 +65,15 @@ export class MessagesService {
     return this._http.post('api/startListener', {}, { params });
   }
 
-  private convertToMessage(res: any) {
-    const data = res as SimpleMessage[] || [];
+  private convertToMessageResult(res: any): MessageResult {
+    const data = res.messages as SimpleMessage[] || [];
     data.forEach((d) => {
       // convert string to date
       d.timestamp = new Date(d.timestamp);
     });
 
-    return data;
+    let result: MessageResult = { messages: data, lastId: res.lastId}
+    return result;
   }
 
   private convertToMap(json): Map<String, Object> {
