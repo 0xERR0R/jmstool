@@ -50,7 +50,7 @@ export class MessagesService {
 
   getListenerStatus(): Observable<Map<String, Object>> {
     return this._http.get('api/statusListener')
-      .map((res: Response) => this.convertToMap(res.json()));
+      .map((res: Response) => this.convertToMap(res));
   }
 
   stopLister(queue: string): Observable<any> {
