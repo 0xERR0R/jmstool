@@ -1,7 +1,7 @@
 FROM tomcat:9-jre8
 
-RUN wget http://central.maven.org/maven2/com/ibm/mq/com.ibm.mq.allclient/9.0.5.0/com.ibm.mq.allclient-9.0.5.0.jar -O lib/com.ibm.mq.allclient.jar && \
+RUN wget http://central.maven.org/maven2/com/ibm/mq/com.ibm.mq.allclient/9.1.1.0/com.ibm.mq.allclient-9.1.1.0.jar -O lib/com.ibm.mq.allclient.jar && \
     wget http://central.maven.org/maven2/javax/jms/javax.jms-api/2.0/javax.jms-api-2.0.jar -O lib/jms-api.jar && \
     rm -rf webapps/*
 
-ADD backend/target/jmstool.war webapps/ROOT.war
+COPY backend/target/jmstool.war webapps/ROOT.war
