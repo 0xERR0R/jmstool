@@ -39,21 +39,23 @@ export class MessageTableComponent implements OnInit, OnDestroy {
 
   private refreshData(): void {
     // get new messages since last update
-    this.messagesService.getMessages(this.type, this.lastId, MessageTableComponent.MAX_MESSAGES_TO_SHOW).subscribe(
+    this.messagesService.getMessages(this.type, this.lastId, MessageTableComponent.MAX_MESSAGES_TO_SHOW)
+    .finally(() => this.subscribeToData())
+    .subscribe(
       result => {
         // set for new messages the isNew flag
-        result.forEach((message) => message.isNew = true);
+        result.messages.forEach((message) => message.isNew = true);
 
-        if (this.showNotifications && result.length > 0) {
-          this.notificationsService.info('New Message', result.length + ' messages received', { timeOut: 2000 });
+        if (this.showNotifications && result.messages.length > 0) {
+          this.notificationsService.info('New Message', result.messages.length + ' messages received', { timeOut: 2000 });
         }
 
         // reset this flag after some time
-        setTimeout(() => result.forEach((message) => message.isNew = false),
+        setTimeout(() => result.messages.forEach((message) => message.isNew = false),
           MessageTableComponent.NEW_MESSAGE_INDICATOR_TIME_MS);
 
         // put new messages at the beginn (newest messages first)
-        this.messages = result.concat(this.messages);
+        this.messages = result.messages.concat(this.messages);
 
         // truncate array to max size
         if (this.messages.length > MessageTableComponent.MAX_MESSAGES_TO_SHOW) {
@@ -61,12 +63,11 @@ export class MessageTableComponent implements OnInit, OnDestroy {
         }
 
         // determine last id for next update
-        for (const message of this.messages) {
-          if (this.lastId < message.id) {
-            this.lastId = message.id;
-          }
-        }
-        this.subscribeToData();
+        this.lastId = result.lastId
+      },
+      error => {
+        console.log("error: ", error);
+        
       }
     );
   }

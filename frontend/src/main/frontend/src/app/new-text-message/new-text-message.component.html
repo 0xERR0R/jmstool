@@ -27,6 +27,6 @@
     <div class="form-inline">
         <label for="count">Number of messages:</label>
         <input name="count" class="form-control" [(ngModel)]="count" required type="number" min=1 max=9999 style="width: 100px" />
-        <button type="submit" class="btn btn-primary btn-sm" style="margin-left: 10px" [disabled]="!form.form.valid"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Send</button>
+        <button type="submit" class="btn btn-primary btn-sm" style="margin-left: 10px" [disabled]="!form.form.valid || count <= 0"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Send</button>
     </div>
 </form>

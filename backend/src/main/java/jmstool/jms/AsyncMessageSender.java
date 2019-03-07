@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
+import io.swagger.annotations.ApiModelProperty;
 import jmstool.model.SimpleMessage;
 import jmstool.storage.LocalMessageStorage;
 
@@ -36,7 +37,11 @@ public class AsyncMessageSender implements Runnable {
 	private final BlockingQueue<SimpleMessage> pendingMessages = new LinkedBlockingQueue<>();
 
 	public final static class Stats {
+		
+		@ApiModelProperty(notes = "Count of messages to send")
 		private final int pendingCount;
+		
+		@ApiModelProperty(notes = "Count of faulty attempts to send a message")
 		private final int totalErrorCount;
 
 		public Stats(int pendingCount, int totalErrorCount) {

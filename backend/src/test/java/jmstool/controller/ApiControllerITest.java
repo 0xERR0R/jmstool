@@ -4,10 +4,11 @@ import static jmstool.controller.ApiController.URL_API_BULK_FILE;
 import static jmstool.controller.ApiController.URL_API_MESSAGES;
 import static jmstool.controller.ApiController.URL_API_PROPERTIES;
 import static jmstool.controller.ApiController.URL_API_QUEUES;
-import static jmstool.controller.ApiController.*;
+import static jmstool.controller.ApiController.URL_API_SEND;
 import static jmstool.controller.ApiController.URL_API_START_LISTENER;
 import static jmstool.controller.ApiController.URL_API_STATUS_LISTENER;
 import static jmstool.controller.ApiController.URL_API_STOP_LISTENER;
+import static jmstool.controller.ApiController.URL_API_WORK_IN_PROGRESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasSize;
@@ -52,6 +53,7 @@ import jmstool.storage.LocalMessageStorage;
 		"jmstool.userMessageProperties = MYPROP, OTHERPROP", "logging.level.jmstool = DEBUG" })
 @AutoConfigureMockMvc
 public class ApiControllerITest {
+
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -170,6 +172,15 @@ public class ApiControllerITest {
 	}
 
 	@Test
+	public void sendMessageToWrongQueue() throws Exception {
+		mockMvc.perform(post(URL_API_SEND).content( //
+				"{\"queue\":\"java:comp/env/jms/wrongQueue\"," + //
+						"\"text\": \"messageText\"," + //
+						"\"props\": {}}")
+				.contentType("application/json")).andExpect(status().isBadRequest());
+	}
+
+	@Test
 	public void getMessagesShouldReturnEmptyResult() throws Exception {
 		mockMvc.perform(get(URL_API_MESSAGES) //
 				.param("messageType", "INCOMING") //
@@ -177,7 +188,7 @@ public class ApiControllerITest {
 				.param("maxCount", "200")) //
 				.andExpect(status().isOk()) //
 				.andExpect(content().contentType("application/json;charset=UTF-8")) //
-				.andExpect(content().json("[]"));
+				.andExpect(content().json("{\"messages\":[], \"lastId\":0}"));
 
 		mockMvc.perform(get(URL_API_MESSAGES) //
 				.param("messageType", "OUTGOING") //
@@ -185,7 +196,7 @@ public class ApiControllerITest {
 				.param("maxCount", "200")) //
 				.andExpect(status().isOk()) //
 				.andExpect(content().contentType("application/json;charset=UTF-8")) //
-				.andExpect(content().json("[]"));
+				.andExpect(content().json("{\"messages\":[], \"lastId\":0}"));
 	}
 
 	@Test
@@ -249,11 +260,35 @@ public class ApiControllerITest {
 				.param("maxCount", "200")) //
 				.andExpect(status().isOk()) //
 				.andExpect(content().contentType("application/json;charset=UTF-8")) //
-				.andExpect(jsonPath("$", hasSize(2))) //
-				.andExpect(jsonPath("$[0].text", is("message in queue2"))) //
-				.andExpect(jsonPath("$[0].queue", is("java:comp/env/jms/in2"))) //
-				.andExpect(jsonPath("$[1].text", is("message in queue1"))) //
-				.andExpect(jsonPath("$[1].queue", is("java:comp/env/jms/in1")));
+				.andExpect(jsonPath("messages", hasSize(2))) //
+				.andExpect(jsonPath("messages[0].text", is("message in queue2"))) //
+				.andExpect(jsonPath("messages[0].queue", is("java:comp/env/jms/in2"))) //
+				.andExpect(jsonPath("messages[1].text", is("message in queue1"))) //
+				.andExpect(jsonPath("messages[1].queue", is("java:comp/env/jms/in1")));
+	}
+
+	@Test
+	public void buldSendWithWrongFileType() throws Exception {
+		FileInputStream fis = new FileInputStream("pom.xml");
+		MockMultipartFile upload = new MockMultipartFile("file", fis);
+
+		mockMvc.perform(MockMvcRequestBuilders.fileUpload(URL_API_BULK_FILE) //
+				.file(upload) //
+				.param("queue", "java:comp/env/jms/out1")) //
+				.andExpect(status().is(400));
+
+	}
+
+	@Test
+	public void buldSendWithWrongQueue() throws Exception {
+		FileInputStream fis = new FileInputStream("./src/test/resources/test_archive_with_2_files.zip");
+		MockMultipartFile upload = new MockMultipartFile("file", fis);
+
+		mockMvc.perform(MockMvcRequestBuilders.fileUpload(URL_API_BULK_FILE) //
+				.file(upload) //
+				.param("queue", "java:comp/env/jms/wrongQueue")) //
+				.andExpect(status().is(400));
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -269,7 +304,7 @@ public class ApiControllerITest {
 				.file(upload) //
 				.param("queue", "java:comp/env/jms/out1")) //
 				.andExpect(content().contentType("application/json;charset=UTF-8")) //
-				.andExpect(jsonPath("count", is("2"))) //
+				.andExpect(content().string(is("2"))) //
 				.andExpect(status().is(200));
 
 		await().until(() -> outgoingStorage.size() == 2);

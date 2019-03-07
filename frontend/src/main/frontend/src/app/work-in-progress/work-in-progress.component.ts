@@ -52,20 +52,19 @@ export class WorkInProgressComponent implements OnInit, OnDestroy {
           // show amount of pending messages and optionally the total error count
           let notificationText: string = t.pendingCount + " pending messages" + (t.totalErrorCount > 0 ? ", total error count: " + t.totalErrorCount : "");
 
-          // there is already a notification, uptate the text
+          // there is already a notification, remove it
           if (this.notification) {
-            this.notification.content = notificationText;
+            this.notificationsService.remove(this.notification.id);
           }
-          else {
-            // no notification is beeing displayed, create one
-            this.notification = this.notificationsService.alert('Work in progress',
-              notificationText, {
-                animate: 'scale',
-                showProgressBar: false,
-                pauseOnHover: false,
-                clickToClose: false
-              });
-          }
+
+          // no notification is beeing displayed, create one
+          this.notification = this.notificationsService.alert('Work in progress',
+            notificationText, {
+              animate: 'null',
+              showProgressBar: false,
+              pauseOnHover: false,
+              clickToClose: false
+            });
         }
         // server has no work
         else {

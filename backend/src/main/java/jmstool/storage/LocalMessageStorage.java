@@ -37,8 +37,12 @@ public class LocalMessageStorage {
 	public synchronized void clear() {
 		storage.clear();
 	}
-	
+
 	public synchronized int size() {
 		return storage.size();
+	}
+
+	public synchronized long getLastId() {
+		return storage.keySet().isEmpty() ? 0 : Collections.max(storage.keySet());
 	}
 }

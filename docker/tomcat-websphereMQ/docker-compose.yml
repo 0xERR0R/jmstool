@@ -1,0 +1,23 @@
+version: '2'
+services:
+  tomcat:
+    image: spx01/jmstool-webspheremq
+    container_name: jmstool-tomcat
+    ports:
+     - "8080:8080"
+    environment:
+     - TZ=Europe/Berlin
+     - spring.jms.jndi-name=java:comp/env/jms/QCF
+     - jmstool.incomingQueues=java:comp/env/jms/QDEV1
+     - jmstool.outgoingQueues=java:comp/env/jms/QDEV2
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - ./context.xml:/usr/local/tomcat/conf/context.xml
+  websphereMQ:
+    image: "ibmcom/mq"
+    container_name: jmstool-websphereMQ
+    environment:
+      - LICENSE=accept
+      - MQ_QMGR_NAME=QM1
+    ports:
+     - "9443:9443"

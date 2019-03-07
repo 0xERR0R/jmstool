@@ -13,6 +13,7 @@ This is a simple web app (Angular frontend and Spring backend) to receive and se
 * Upload of ZIP with message files - each message inside will be sent
 * Asyncronous sending of messages with progress indication
 * Stop and start JMS Queue listeners
+* Connection authentication
 
 ### Configuration
 Please change following configuration properties (application.properties in WAR, environment variables or as JNDI context properties) before deployment.
@@ -20,11 +21,14 @@ Please change following configuration properties (application.properties in WAR,
 | Property             | Description                               | Mandatory | Example  |
 | -------------------- |:-----------------------------------:      |:--------:|:---------:|
 | spring.jms.jndi-name | JNDI name of JMS connection factory       | yes      | java:comp/env/jms/cf |
-| jmstool.incomingQueues | comma separated list of incoming queues | no       | java:comp/env/jms/in1, java:comp/env/jms/in2|
-| jmstool.outgoingQueues | comma separated list of outgoing queues | no | java:comp/env/jms/out1, java:comp/env/jms/out2|
-| jmstool.userMessageProperties | message properties for outgoing messages | no | MYPROP1,MYPROP2 |
-| jmstool.showMessagePropertiesForIncomingMessages | show these message property keys in message window for incoming messages | no | MYPROP |
+| jmstool.incomingQueues | Comma separated list of incoming queues | no       | java:comp/env/jms/in1, java:comp/env/jms/in2|
+| jmstool.outgoingQueues | Comma separated list of outgoing queues | no | java:comp/env/jms/out1, java:comp/env/jms/out2|
+| jmstool.userMessageProperties | Message properties for outgoing messages | no | MYPROP1,MYPROP2 |
+| jmstool.showMessagePropertiesForIncomingMessages | Show these message property keys in message window for incoming messages | no | MYPROP |
 | jmstool.encoding | Default encoding used for BytesMessages (default: UTF-8) | no | ISO-8859-15 |
+| jmstool.useCachingConnectionFactory | Cache connections (default: true) | no | false |
+| jmstool.connectionFactory.username | Username for connection authentication | no | app |
+| jmstool.connectionFactory.password | Password for connection authentication | no | secretpassword |
 
 ### Development
 See this page [Hints for development](DEV.md)
