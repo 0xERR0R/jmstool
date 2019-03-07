@@ -39,11 +39,11 @@ public class ConnectionFactoryDecoratingPostProcessor implements BeanPostProcess
 			adapter.setTargetConnectionFactory((ConnectionFactory) bean);
 			adapter.setUsername(username);
 			adapter.setPassword(password);
-			bean = adapter;
 
 			if (useCachingConnectionFactory) {
-				return new CachingConnectionFactory((ConnectionFactory) bean);
+				return new CachingConnectionFactory(adapter);
 			}
+			return adapter;
 		}
 		return bean;
 	}
