@@ -1,0 +1,25 @@
+<Context>
+    <JarScanner scanClassPath="false" scanAllFiles="false" scanAllDirectories="false"/>
+
+  <Resource
+      name="jms/QCF"
+      auth="Container"
+      type="org.apache.activemq.ActiveMQConnectionFactory"
+      factory="org.apache.activemq.jndi.JNDIReferenceFactory"
+	  brokerURL="tcp://activeMQ:61616?jms.redeliveryPolicy.maximumRedeliveries=2&amp;jms.redeliveryPolicy.initialRedeliveryDelay=0&amp;jms.redeliveryPolicy.redeliveryDelay=5000"/>
+
+   <Resource
+      name="jms/QDEV1"
+      auth="Container"
+      type="org.apache.activemq.command.ActiveMQQueue"
+      factory="org.apache.activemq.jndi.JNDIReferenceFactory"
+      physicalName="DEV.QUEUE.1"/>
+
+   <Resource
+      name="jms/QDEV2"
+      auth="Container"
+      type="org.apache.activemq.command.ActiveMQQueue"
+      factory="org.apache.activemq.jndi.JNDIReferenceFactory"
+      physicalName="DEV.QUEUE.2"/>      
+
+</Context>
