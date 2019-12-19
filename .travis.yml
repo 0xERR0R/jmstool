@@ -2,6 +2,7 @@ language: java
 sudo: required
 services: docker
 install: true
+dist: trusty
 jdk:
 - oraclejdk8
 script:
