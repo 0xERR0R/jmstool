@@ -9,6 +9,7 @@ script:
 - mvn clean install
 - docker build -t jmstool-webspheremq -f docker/tomcat-websphereMQ/Dockerfile .
 - docker build -t jmstool-activemq -f docker/tomcat-activeMQ/Dockerfile .
+- docker build -t jmstool-artemismq -f docker/tomcat-artemisMQ/Dockerfile .
 cache:
   directories:
   - "$HOME/.m2/repository"
@@ -20,3 +21,5 @@ after_success:
 - docker push $DOCKER_USER/jmstool-webspheremq
 - docker tag jmstool-activemq:latest $DOCKER_USER/jmstool-activemq:latest
 - docker push $DOCKER_USER/jmstool-activemq
+- docker tag jmstool-artemismq:latest $DOCKER_USER/jmstool-artemismq:latest
+- docker push $DOCKER_USER/jmstool-artemismq
