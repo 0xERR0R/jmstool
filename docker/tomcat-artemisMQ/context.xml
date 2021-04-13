@@ -1,0 +1,27 @@
+<Context>
+    <JarScanner scanClassPath="false" scanAllFiles="false" scanAllDirectories="false"/>
+
+  <Resource
+      user="dev"
+      password="pass4dev"
+      name="jms/QCF"
+      auth="Container"
+      type="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory"
+      factory="org.apache.activemq.artemis.jndi.JNDIReferenceFactory"
+	  brokerURL="tcp://artemismq:61616"/>
+
+   <Resource
+      name="jms/QDEV1"
+      auth="Container"
+      type="org.apache.activemq.artemis.jms.client.ActiveMQQueue"
+      factory="org.apache.activemq.artemis.jndi.JNDIReferenceFactory"
+      address="jms.queue.DEV.QUEUE.1"/>
+
+   <Resource
+      name="jms/QDEV2"
+      auth="Container"
+      type="org.apache.activemq.artemis.jms.client.ActiveMQQueue"
+      factory="org.apache.activemq.artemis.jndi.JNDIReferenceFactory"
+      address="jms.queue.DEV.QUEUE.2"/>
+
+</Context>

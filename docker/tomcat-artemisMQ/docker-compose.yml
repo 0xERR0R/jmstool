@@ -1,0 +1,21 @@
+version: '2'
+services:
+  tomcat:
+    image: spx01/jmstool-artemismq:latest
+    container_name: jmstool-tomcat
+    ports:
+     - "8080:8080"
+    environment:
+     - TZ=Europe/Berlin
+     - spring.jms.jndi-name=java:comp/env/jms/QCF
+     - jmstool.incomingQueues=java:comp/env/jms/QDEV1
+     - jmstool.outgoingQueues=java:comp/env/jms/QDEV2
+    volumes:
+    - ./context.xml:/usr/local/tomcat/conf/context.xml
+  artemismq:
+    build: jboss
+    container_name: jmstool-artemismq
+    environment:
+      - PREPEND_JAVA_OPTS=-Djboss.server.default.config=standalone-full.xml
+    ports:
+     - "9990:9990"

@@ -1,0 +1,13 @@
+connect
+
+/subsystem=messaging-activemq/server=default/jms-queue=DEV.QUEUE.1:add(entries=[java:jboss/exported/DEV.QUEUE.1])
+/subsystem=messaging-activemq/server=default/jms-queue=DEV.QUEUE.2:add(entries=[java:jboss/exported/DEV.QUEUE.2])
+
+reload
+
+/socket-binding-group=standard-sockets/socket-binding=activemq-5x:add(port=61616)
+
+reload
+
+/subsystem=messaging-activemq/server=default/remote-acceptor=activemq-5x-acceptor:add(socket-binding=activemq-5x)
+reload
